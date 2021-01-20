@@ -22,27 +22,39 @@ public class DriveSubsystem extends SubsystemBase {
   private final SwerveModuleFalcon m_frontLeft =
       new SwerveModuleFalcon(
           DriveConstants.kFrontLeftDriveMotorPort,
-          DriveConstants.kFrontLeftTurningMotorPort);
+          DriveConstants.kFrontLeftTurningMotorPort,
+              true);
 
   private final SwerveModuleFalcon m_frontRight =
       new SwerveModuleFalcon(
           DriveConstants.kFrontRightDriveMotorPort,
-          DriveConstants.kFrontRightTurningMotorPort);
+          DriveConstants.kFrontRightTurningMotorPort,
+              false);
 
   private final SwerveModuleFalcon m_rearLeft =
       new SwerveModuleFalcon(
           DriveConstants.kRearLeftDriveMotorPort,
-          DriveConstants.kRearLeftTurningMotorPort);
+          DriveConstants.kRearLeftTurningMotorPort,
+              true);
     
   private final SwerveModuleFalcon m_rearRight =
       new SwerveModuleFalcon(
           DriveConstants.kRearRightDriveMotorPort,
-          DriveConstants.kRearRightTurningMotorPort);
+          DriveConstants.kRearRightTurningMotorPort,
+              false);
 
   private boolean isDriveEnabled = false;
   private double xSpeed;
   private double ySpeed;
   private double rot;
+  private double speedCommandLF;
+  private double speedCommandRF;
+  private double speedCommandLB;
+  private double speedCommandRB;
+  private double rotCommandLF;
+  private double rotCommandRF;
+  private double rotCommandLB;
+  private double rotCommandRB;
 
   // The gyro sensor
   private PigeonIMU m_gyro = new PigeonIMU(DriveConstants.kGyroPort);
@@ -80,6 +92,15 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("xSpeed", xSpeed);
     SmartDashboard.putNumber("ySpeed", ySpeed);
     SmartDashboard.putNumber("rot", rot);
+    SmartDashboard.putNumber("Left Front Speed", speedCommandLF);
+    SmartDashboard.putNumber("Left Front Angle", rotCommandLF);
+    SmartDashboard.putNumber("Left back Speed", speedCommandLB);
+    SmartDashboard.putNumber("Left back Angle", rotCommandLB);
+    SmartDashboard.putNumber("Right Front Speed", speedCommandRF);
+    SmartDashboard.putNumber("Right Front Angle", rotCommandRF);
+    SmartDashboard.putNumber("Right Back Speed", speedCommandRB);
+    SmartDashboard.putNumber("Right Back Angle", rotCommandRB);
+
   }
 
   public void setTurnAngle(double angleDegrees) {
@@ -94,6 +115,12 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontLeft.setWheelSpeed(metersPerSec);
     m_rearRight.setWheelSpeed(metersPerSec);
     m_rearLeft.setWheelSpeed(metersPerSec);
+  }
+  public void setWheelSpeedPercent(double percent) {
+    m_frontRight.setWheelSpeed(percent);
+    m_frontLeft.setWheelSpeed(percent);
+    m_rearRight.setWheelSpeed(percent);
+    m_rearLeft.setWheelSpeed(percent);
   }
 
   /**
@@ -133,6 +160,15 @@ public class DriveSubsystem extends SubsystemBase {
               ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getHeading()))
               : new ChassisSpeeds(xSpeed, ySpeed, rot));
       SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+      speedCommandLF = swerveModuleStates[0].speedMetersPerSecond;
+      rotCommandLF = swerveModuleStates[0].angle.getDegrees();
+      speedCommandLB = swerveModuleStates[2].speedMetersPerSecond;
+      rotCommandLB = swerveModuleStates[2].angle.getDegrees();
+      speedCommandRF = swerveModuleStates[1].speedMetersPerSecond;
+      rotCommandRF = swerveModuleStates[1].angle.getDegrees();
+      speedCommandRB = swerveModuleStates[3].speedMetersPerSecond;
+      rotCommandRB = swerveModuleStates[3].angle.getDegrees();
+
       m_frontLeft.setDesiredState(swerveModuleStates[0]);
       m_frontRight.setDesiredState(swerveModuleStates[1]);
       m_rearLeft.setDesiredState(swerveModuleStates[2]);

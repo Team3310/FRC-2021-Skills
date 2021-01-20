@@ -26,6 +26,7 @@ public class SwerveModuleFalcon {
 
   private static final int kTurnMotionMagicSlot = 0;
   private static final int kWheelVelocitySlot = 0;
+  private static final double TWO_PI = 2*Math.PI;
 
   /**
    * Constructs a SwerveModule.
@@ -33,7 +34,7 @@ public class SwerveModuleFalcon {
    * @param driveMotorChannel   ID for the drive motor.
    * @param turningMotorChannel ID for the turning motor.
    */
-  public SwerveModuleFalcon(int driveMotorChannel, int turningMotorChannel) {
+  public SwerveModuleFalcon(int driveMotorChannel, int turningMotorChannel, boolean isRight) {
 
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_turnMotor = new TalonFX(turningMotorChannel);
@@ -44,7 +45,7 @@ public class SwerveModuleFalcon {
     m_driveMotor.configAllSettings(configs);
     m_turnMotor.configAllSettings(configs);
 
-    m_driveMotor.setInverted(TalonFXInvertType.Clockwise);
+    m_driveMotor.setInverted(isRight ? TalonFXInvertType.CounterClockwise : TalonFXInvertType.Clockwise);
     m_turnMotor.setInverted(TalonFXInvertType.CounterClockwise);
 
     m_driveMotor.setNeutralMode(NeutralMode.Brake);
@@ -102,7 +103,7 @@ public class SwerveModuleFalcon {
    * @return The current state of the module.
    */
   public SwerveModuleState getState() {
-    return new SwerveModuleState(getDriveMetersPerSecond(), new Rotation2d(getTurnWheelAngleRadians()));
+    return new SwerveModuleState(getDriveMetersPerSecond(), new Rotation2d(normalize(getTurnWheelAngleRadians())));
   }
 
   /**
@@ -129,6 +130,9 @@ public class SwerveModuleFalcon {
 
   public void setWheelSpeed(double metersPerSec) {
     m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(metersPerSec));
+  }
+  public void setWheelSpeedPercentBus(double percent) {
+    m_driveMotor.set(TalonFXControlMode.PercentOutput, percent);
   }
 
   // Zeros all the SwerveModule encoders.
@@ -292,4 +296,9 @@ public class SwerveModuleFalcon {
     return inchesToMeters(getTurnWheelDistanceInches());
   }
 
+  double normalize(double radians) {
+    double normalized = radians % TWO_PI;
+    normalized = (normalized+TWO_PI) % TWO_PI;
+    return normalized <= Math.PI ? normalized : normalized - TWO_PI;
+  }
 }
