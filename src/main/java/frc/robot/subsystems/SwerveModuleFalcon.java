@@ -103,7 +103,7 @@ public class SwerveModuleFalcon {
    * @return The current state of the module.
    */
   public SwerveModuleState getState() {
-    return new SwerveModuleState(getDriveMetersPerSecond(), new Rotation2d(normalize(getTurnWheelAngleRadians())));
+    return new SwerveModuleState(getDriveMetersPerSecond(), new Rotation2d(getTurnWheelAngleRadians()));
   }
 
   /**
@@ -111,7 +111,11 @@ public class SwerveModuleFalcon {
    *
    * @param state Desired state with speed and angle.
    */
-  public void setDesiredState(SwerveModuleState state) {
+  public void setDesiredState(SwerveModuleState desiredState) {
+    // Optimize the reference state to avoid spinning further than 90 degrees
+    SwerveModuleState state =
+        SwerveModuleState.optimize(desiredState, new Rotation2d(getTurnWheelAngleRadians()));
+
     // Calculate the turning motor output from the turning PID controller.
     m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(state.speedMetersPerSecond));
     m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(state.angle.getDegrees()),
