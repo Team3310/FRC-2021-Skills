@@ -1,0 +1,3 @@
+[submodule "Common-Public"]
+	path = Common-Public
+	url = https://github.com/FRCTeam2910/Common-Public.git
