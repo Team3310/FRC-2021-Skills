@@ -1,13 +1,19 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.commands.HolonomicDriveCommand;
-import frc.drivers.Mk2SwerveModule;
-import frc.common.control.*;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import frc.common.control.HolonomicMotionProfiledTrajectoryFollower;
+import frc.common.control.MaxAccelerationConstraint;
+import frc.common.control.MaxVelocityConstraint;
+import frc.common.control.PidConstants;
+import frc.common.control.PidController;
 import frc.common.drivers.Gyroscope;
 import frc.common.drivers.SwerveModule;
 import frc.common.math.RigidTransform2;
@@ -15,20 +21,13 @@ import frc.common.math.Vector2;
 import frc.common.util.DrivetrainFeedforwardConstants;
 import frc.common.util.HolonomicDriveSignal;
 import frc.common.util.HolonomicFeedforward;
-
-import java.util.Optional;
+import frc.robot.drivers.Mk2SwerveModule;
 
 public class DrivetrainSubsystem extends SwerveDrivetrain {
     private static final double TRACKWIDTH = 19.5;
     private static final double WHEELBASE = 23.5;
 
     private static final double MAX_VELOCITY = 12.0 * 12.0;
-
-    public static final ITrajectoryConstraint[] CONSTRAINTS = {
-            new MaxVelocityConstraint(MAX_VELOCITY),
-            new MaxAccelerationConstraint(13.0 * 12.0),
-            new CentripetalAccelerationConstraint(25.0 * 12.0)
-    };
 
     private static final double FRONT_LEFT_ANGLE_OFFSET_COMPETITION = Math.toRadians(-154.3);
     private static final double FRONT_RIGHT_ANGLE_OFFSET_COMPETITION = Math.toRadians(-329.0);
@@ -64,53 +63,46 @@ public class DrivetrainSubsystem extends SwerveDrivetrain {
 
     private final Object lock = new Object();
     private HolonomicDriveSignal signal = new HolonomicDriveSignal(Vector2.ZERO, 0.0, false);
-    private Trajectory.Segment segment = null;
-
+ 
     private DrivetrainSubsystem() {
         double frontLeftAngleOffset = FRONT_LEFT_ANGLE_OFFSET_COMPETITION;
         double frontRightAngleOffset = FRONT_RIGHT_ANGLE_OFFSET_COMPETITION;
         double backLeftAngleOffset = BACK_LEFT_ANGLE_OFFSET_COMPETITION;
         double backRightAngleOffset = BACK_RIGHT_ANGLE_OFFSET_COMPETITION;
-        if (Superstructure.getInstance().isPracticeBot()) {
-            frontLeftAngleOffset = FRONT_LEFT_ANGLE_OFFSET_PRACTICE;
-            frontRightAngleOffset = FRONT_RIGHT_ANGLE_OFFSET_PRACTICE;
-            backLeftAngleOffset = BACK_LEFT_ANGLE_OFFSET_PRACTICE;
-            backRightAngleOffset = BACK_RIGHT_ANGLE_OFFSET_PRACTICE;
-        }
-
+ 
         Mk2SwerveModule frontLeftModule = new Mk2SwerveModule(
                 new Vector2(-TRACKWIDTH / 2.0, WHEELBASE / 2.0),
                 frontLeftAngleOffset,
-                new Spark(RobotMap.DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR),
-                new CANSparkMax(RobotMap.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless),
-                new AnalogInput(RobotMap.DRIVETRAIN_FRONT_LEFT_ANGLE_ENCODER)
+                new Spark(0),
+                new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless),
+                new AnalogInput(2)
         );
         frontLeftModule.setName("Front Left");
 
         Mk2SwerveModule frontRightModule = new Mk2SwerveModule(
                 new Vector2(TRACKWIDTH / 2.0, WHEELBASE / 2.0),
                 frontRightAngleOffset,
-                new Spark(RobotMap.DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR),
-                new CANSparkMax(RobotMap.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless),
-                new AnalogInput(RobotMap.DRIVETRAIN_FRONT_RIGHT_ANGLE_ENCODER)
+                new Spark(3),
+                new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless),
+                new AnalogInput(5)
         );
         frontRightModule.setName("Front Right");
 
         Mk2SwerveModule backLeftModule = new Mk2SwerveModule(
                 new Vector2(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0),
                 backLeftAngleOffset,
-                new Spark(RobotMap.DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR),
-                new CANSparkMax(RobotMap.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless),
-                new AnalogInput(RobotMap.DRIVETRAIN_BACK_LEFT_ANGLE_ENCODER)
+                new Spark(6),
+                new CANSparkMax(7, CANSparkMaxLowLevel.MotorType.kBrushless),
+                new AnalogInput(8)
         );
         backLeftModule.setName("Back Left");
 
         Mk2SwerveModule backRightModule = new Mk2SwerveModule(
                 new Vector2(TRACKWIDTH / 2.0, -WHEELBASE / 2.0),
                 backRightAngleOffset,
-                new Spark(RobotMap.DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR),
-                new CANSparkMax(RobotMap.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless),
-                new AnalogInput(RobotMap.DRIVETRAIN_BACK_RIGHT_ANGLE_ENCODER)
+                new Spark(9),
+                new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless),
+                new AnalogInput(11)
         );
         backRightModule.setName("Back Right");
 
@@ -168,9 +160,6 @@ public class DrivetrainSubsystem extends SwerveDrivetrain {
         if (optSignal.isPresent()) {
             localSignal = optSignal.get();
 
-            synchronized (lock) {
-                segment = follower.getLastSegment();
-            }
         } else {
             synchronized (lock) {
                 localSignal = this.signal;
@@ -195,29 +184,6 @@ public class DrivetrainSubsystem extends SwerveDrivetrain {
     @Override
     public void outputToSmartDashboard() {
         super.outputToSmartDashboard();
-
-        HolonomicDriveSignal localSignal;
-        Trajectory.Segment localSegment;
-        synchronized (lock) {
-            localSignal = signal;
-            localSegment = segment;
-        }
-
-        SmartDashboard.putNumber("Drivetrain Follower Forwards", localSignal.getTranslation().x);
-        SmartDashboard.putNumber("Drivetrain Follower Strafe", localSignal.getTranslation().y);
-        SmartDashboard.putNumber("Drivetrain Follower Rotation", localSignal.getRotation());
-        SmartDashboard.putBoolean("Drivetrain Follower Field Oriented", localSignal.isFieldOriented());
-
-        if (follower.getCurrentTrajectory().isPresent() && localSegment != null) {
-            SmartDashboard.putNumber("Drivetrain Follower Target Angle", localSegment.rotation.toDegrees());
-
-            Vector2 position = getKinematicPosition();
-
-            SmartDashboard.putNumber("Drivetrain Follower X Error", localSegment.translation.x - position.x);
-            SmartDashboard.putNumber("Drivetrain Follower Y Error", localSegment.translation.y - position.y);
-            SmartDashboard.putNumber("Drivetrain Follower Angle Error", localSegment.rotation.toDegrees() - getGyroscope().getAngle().toDegrees());
-        }
-
         for (Mk2SwerveModule module : swerveModules) {
             SmartDashboard.putNumber(String.format("%s Module Drive Current Draw", module.getName()), module.getDriveCurrent());
         }
@@ -234,7 +200,7 @@ public class DrivetrainSubsystem extends SwerveDrivetrain {
 
     @Override
     public Gyroscope getGyroscope() {
-        return Superstructure.getInstance().getGyroscope();
+        return null; //Superstructure.getInstance().getGyroscope();
     }
 
     @Override
@@ -245,11 +211,6 @@ public class DrivetrainSubsystem extends SwerveDrivetrain {
     @Override
     public double getMaximumAcceleration() {
         return 0;
-    }
-
-    @Override
-    protected void initDefaultCommand() {
-        setDefaultCommand(new HolonomicDriveCommand());
     }
 
     @Override

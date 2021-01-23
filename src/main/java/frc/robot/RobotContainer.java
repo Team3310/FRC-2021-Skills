@@ -50,9 +50,9 @@ public class RobotContainer {
     RunCommand driveCommand = new RunCommand(
             () ->
                 m_robotDrive.drive(
-                    -m_driverController.getY(GenericHID.Hand.kLeft)*4.0,
-                    -m_driverController.getX(GenericHID.Hand.kLeft)*4.0,
-                    -m_driverController.getX(GenericHID.Hand.kRight)*4.0,
+                    -m_driverController.getY(GenericHID.Hand.kLeft)*1.0,
+                    -m_driverController.getX(GenericHID.Hand.kLeft)*1.0,
+                    m_driverController.getX(GenericHID.Hand.kRight),
                     false));
     driveCommand.addRequirements(m_robotDrive);
     // Configure default commands
@@ -79,8 +79,6 @@ public class RobotContainer {
       SmartDashboard.putData("Reset Gyro", new InstantCommand(() -> m_robotDrive.resetHeading()));
       SmartDashboard.putData("Enable Drive", new InstantCommand(() -> m_robotDrive.setDriveEnabled(true)));
       SmartDashboard.putData("Disable Drive", new InstantCommand(() -> m_robotDrive.setDriveEnabled(false)));
-      SmartDashboard.putData("Set percent 100", new InstantCommand(() -> m_robotDrive.setWheelSpeedPercent(100)));
-      SmartDashboard.putData("Set percent 0", new InstantCommand(() -> m_robotDrive.setWheelSpeedPercent(0)));
   }
 
   /**
