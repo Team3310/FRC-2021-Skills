@@ -50,9 +50,9 @@ public class RobotContainer {
     RunCommand driveCommand = new RunCommand(
             () ->
                 m_robotDrive.drive(
-                    -m_driverController.getY(GenericHID.Hand.kLeft)*4.0,
-                    -m_driverController.getX(GenericHID.Hand.kLeft)*4.0,
-                    -m_driverController.getX(GenericHID.Hand.kRight)*4.0,
+                    deadband(-m_driverController.getY(GenericHID.Hand.kLeft)*9.0),
+                    deadband(-m_driverController.getX(GenericHID.Hand.kLeft)*9.0),
+                    deadband(-m_driverController.getX(GenericHID.Hand.kRight)*20.0),
                     false));
     driveCommand.addRequirements(m_robotDrive);
     // Configure default commands
@@ -60,6 +60,13 @@ public class RobotContainer {
    m_robotDrive.setDefaultCommand(driveCommand);
   }
 
+  
+  private double deadband(double input) {
+    if (Math.abs(input) < 0.02) {
+        return 0;
+    } 
+    return input;
+}
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
