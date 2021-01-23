@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.Constants;
+import frc.robot.utilities.Util;
 
 public class SwerveModuleFalcon {
 
@@ -112,14 +113,35 @@ public class SwerveModuleFalcon {
    * @param state Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
+    SwerveModuleState normalizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, Rotation2d.fromDegrees(Util.normalizeAngle180ToMinus180(desiredState.angle.getDegrees())));
     // Optimize the reference state to avoid spinning further than 90 degrees
     SwerveModuleState state =
-        SwerveModuleState.optimize(desiredState, new Rotation2d(getTurnWheelAngleRadians()));
+        SwerveModuleState.optimize(normalizedDesiredState, Rotation2d.fromDegrees(getTurnWheelAngleDegrees()));
 
     // Calculate the turning motor output from the turning PID controller.
     m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(state.speedMetersPerSecond));
     m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(state.angle.getDegrees()),
         DemandType.ArbitraryFeedForward, 0.0);
+  }
+
+  /**
+   * Minimize the change in heading the desired swerve module state would require by potentially
+   * reversing the direction the wheel spins. If this is used with the PIDController class's
+   * continuous input functionality, the furthest a wheel will ever rotate is 90 degrees.
+   *
+   * @param desiredState The desired state.
+   * @param currentAngle The current module angle.
+   */
+  public static SwerveModuleState optimize(
+      SwerveModuleState desiredState, Rotation2d currentAngle) {
+    var delta = desiredState.angle.minus(currentAngle);
+    if (Math.abs(delta.getDegrees()) > 90.0) {
+      return new SwerveModuleState(
+          -desiredState.speedMetersPerSecond,
+          desiredState.angle.rotateBy(Rotation2d.fromDegrees(180.0)));
+    } else {
+      return new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
+    }
   }
 
   public void setControlOff() {
@@ -269,7 +291,7 @@ public class SwerveModuleFalcon {
   }
 
   public double getTurnWheelAngleDegrees() {
-    return getTurnWheelRotations() * 360.0;
+    return Util.normalizeAngle180ToMinus180(getTurnWheelRotations() * 360.0);
   }
 
   public double getTurnWheelAngleRadians() {
