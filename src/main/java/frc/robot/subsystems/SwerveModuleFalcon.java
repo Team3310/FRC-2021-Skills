@@ -113,14 +113,13 @@ public class SwerveModuleFalcon {
    * @param state Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    SwerveModuleState normalizedDesiredState = new SwerveModuleState(desiredState.speedMetersPerSecond, Rotation2d.fromDegrees(Util.normalizeAngle180ToMinus180(desiredState.angle.getDegrees())));
     // Optimize the reference state to avoid spinning further than 90 degrees
     SwerveModuleState state =
-        SwerveModuleState.optimize(normalizedDesiredState, Rotation2d.fromDegrees(getTurnWheelAngleDegrees()));
+        SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getTurnWheelAngleDegrees()));
 
     // Calculate the turning motor output from the turning PID controller.
     m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(state.speedMetersPerSecond));
-    m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(state.angle.getDegrees()),
+    m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(getClosestTargetAngle(state.angle.getDegrees(),getTurnWheelAngleDegrees())),
         DemandType.ArbitraryFeedForward, 0.0);
   }
 
@@ -291,7 +290,7 @@ public class SwerveModuleFalcon {
   }
 
   public double getTurnWheelAngleDegrees() {
-    return Util.normalizeAngle180ToMinus180(getTurnWheelRotations() * 360.0);
+    return getTurnWheelRotations() * 360.0;
   }
 
   public double getTurnWheelAngleRadians() {
@@ -326,5 +325,13 @@ public class SwerveModuleFalcon {
     double normalized = radians % TWO_PI;
     normalized = (normalized+TWO_PI) % TWO_PI;
     return normalized <= Math.PI ? normalized : normalized - TWO_PI;
+  }
+
+  double getClosestTargetAngle(double targetAngleDegrees, double currentAngleDegrees) {
+   
+    double phi = Math.abs(currentAngleDegrees - targetAngleDegrees) % 360;       
+    double smallestDelta = phi > 180 ? 360 - phi : phi;
+
+    return currentAngleDegrees + smallestDelta;
   }
 }
