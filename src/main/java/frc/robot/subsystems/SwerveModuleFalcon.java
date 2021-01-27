@@ -328,10 +328,9 @@ public class SwerveModuleFalcon {
   }
 
   double getClosestTargetAngle(double targetAngleDegrees, double currentAngleDegrees) {
-   
-    double phi = Math.abs(currentAngleDegrees - targetAngleDegrees) % 360;       
-    double smallestDelta = phi > 180 ? 360 - phi : phi;
+    double delta = currentAngleDegrees - targetAngleDegrees;
+    double phi = Math.abs(delta) % 360;       
+    double smallestDelta = Math.copySign(phi > 180 ? 360 - phi : phi, delta);
 
-    return currentAngleDegrees + smallestDelta;
-  }
+    return currentAngleDegrees + smallestDelta;  }
 }
