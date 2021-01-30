@@ -33,7 +33,7 @@ public final class Constants {
     public static final double TURN_OUTPUT_TO_ENCODER_RATIO = 12.8;
     public static final double DRIVE_OUTPUT_TO_ENCODER_RATIO = 8.16;
     public static final double ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
-    public static final double kWheelDiameterInches = 4.0;
+    public static final double kWheelDiameterInches = 3.89;
 
     // Distance between centers of right and left wheels on robot
     public static final double kTrackWidth = 0.34;
@@ -57,7 +57,7 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 9;
+    public static final double kMaxSpeedMetersPerSecond = 4;
   }
 
   public static final class OIConstants {
@@ -66,7 +66,7 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 9;
+    public static final double kMaxSpeedMetersPerSecond = 4;
     public static final double kMaxAccelerationMetersPerSecondSquared = 7;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;

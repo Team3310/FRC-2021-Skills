@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.controller.GameController;
+import frc.robot.controller.Xbox;
 import frc.robot.subsystems.DriveSubsystem;
 
 /*
@@ -38,22 +40,23 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  private final GameController m_driverController = new GameController(OIConstants.kDriverControllerPort, new Xbox());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
 
+
             // A split-stick arcade command, with forward/backward controlled by the left
         // hand, and turning controlled by the right.
     RunCommand driveCommand = new RunCommand(
             () ->
                 m_robotDrive.drive(
-                    deadband(-m_driverController.getY(GenericHID.Hand.kLeft)*9.0),
-                    deadband(-m_driverController.getX(GenericHID.Hand.kLeft)*9.0),
-                    deadband(-m_driverController.getX(GenericHID.Hand.kRight)*20.0),
-                    false));
+                    -m_driverController.getLeftYAxis()*9.0,
+                    -m_driverController.getLeftXAxis()*9.0,
+                    -m_driverController.getRightXAxis()*20.0,
+                    true));
     driveCommand.addRequirements(m_robotDrive);
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
@@ -81,7 +84,9 @@ public class RobotContainer {
       SmartDashboard.putData("Set Turn 360", new InstantCommand(() -> m_robotDrive.setTurnAngle(360)));
       SmartDashboard.putData("Set Wheel Speed 0", new InstantCommand(() -> m_robotDrive.setWheelSpeed(0)));
       SmartDashboard.putData("Set Wheel Speed 1", new InstantCommand(() -> m_robotDrive.setWheelSpeed(1)));
-      SmartDashboard.putData("Set Wheel Speed 5", new InstantCommand(() -> m_robotDrive.setWheelSpeed(5)));
+      SmartDashboard.putData("Set Wheel Speed 4", new InstantCommand(() -> m_robotDrive.setWheelSpeed(4)));
+      SmartDashboard.putData("Set Wheel Speed 9", new InstantCommand(() -> m_robotDrive.setWheelSpeed(9)));
+      SmartDashboard.putData("Set Wheel Speed 20", new InstantCommand(() -> m_robotDrive.setWheelSpeed(20)));
       SmartDashboard.putData("Reset Encoders", new InstantCommand(() -> m_robotDrive.resetEncoders()));
       SmartDashboard.putData("Reset Gyro", new InstantCommand(() -> m_robotDrive.resetHeading()));
       SmartDashboard.putData("Enable Drive", new InstantCommand(() -> m_robotDrive.setDriveEnabled(true)));

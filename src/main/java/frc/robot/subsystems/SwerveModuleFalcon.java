@@ -25,6 +25,8 @@ public class SwerveModuleFalcon {
   private final TalonFX m_driveMotor;
   private final TalonFX m_turnMotor;
 
+  private double targetAngle;
+
   private static final int kTurnMotionMagicSlot = 0;
   private static final int kWheelVelocitySlot = 0;
   private static final double TWO_PI = 2*Math.PI;
@@ -78,10 +80,10 @@ public class SwerveModuleFalcon {
     m_driveMotor.configStatorCurrentLimit(statorCurrentConfigs);
     m_turnMotor.configStatorCurrentLimit(statorCurrentConfigs);
 
-    m_driveMotor.config_kF(kWheelVelocitySlot, 0.0);
+    m_driveMotor.config_kF(kWheelVelocitySlot, 0.04);
     m_driveMotor.config_kP(kWheelVelocitySlot, 0.03);
-    m_driveMotor.config_kI(kWheelVelocitySlot, 0.0);
-    m_driveMotor.config_kD(kWheelVelocitySlot, 0.0);
+    m_driveMotor.config_kI(kWheelVelocitySlot, 0.00005);
+    m_driveMotor.config_kD(kWheelVelocitySlot, 1.5);
   
     m_driveMotor.selectProfileSlot(kWheelVelocitySlot, 0);
 
@@ -89,9 +91,9 @@ public class SwerveModuleFalcon {
     m_turnMotor.configMotionAcceleration(28000);
     m_turnMotor.configMotionSCurveStrength(4);
 
-    m_turnMotor.config_kF(kTurnMotionMagicSlot, 0.0);
-    m_turnMotor.config_kP(kTurnMotionMagicSlot, 0.4);
-    m_turnMotor.config_kI(kTurnMotionMagicSlot, 0.0);
+    m_turnMotor.config_kF(kTurnMotionMagicSlot, 0.05);
+    m_turnMotor.config_kP(kTurnMotionMagicSlot, 1.0);
+    m_turnMotor.config_kI(kTurnMotionMagicSlot, 0.00002);
     m_turnMotor.config_kD(kTurnMotionMagicSlot, 0.0);
     m_turnMotor.config_IntegralZone(kTurnMotionMagicSlot, (int)(5.0 * turnDegreesToTicks(5)));
 
@@ -114,12 +116,21 @@ public class SwerveModuleFalcon {
    */
   public void setDesiredState(SwerveModuleState desiredState) {
     // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state =
-        SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getTurnWheelAngleDegrees()));
+//   SwerveModuleState state =
+//            SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getTurnWheelAngleDegrees()));
+    double targetAngleDegrees = desiredState.angle.getDegrees();
+    double currentAngleDegrees = getTurnWheelAngleDegrees();
+    double targetSpeed = desiredState.speedMetersPerSecond;
+    double error = Math.IEEEremainder(targetAngleDegrees-currentAngleDegrees, 360.0);
+
+    if(Math.abs(error) > 90.0) {
+      error -= Math.copySign(180, error);
+      targetSpeed = -targetSpeed;
+    }
 
     // Calculate the turning motor output from the turning PID controller.
-    m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(state.speedMetersPerSecond));
-    m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(getClosestTargetAngle(state.angle.getDegrees(),getTurnWheelAngleDegrees())),
+        m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(targetSpeed));
+        m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(currentAngleDegrees + error),
         DemandType.ArbitraryFeedForward, 0.0);
   }
 
@@ -150,7 +161,8 @@ public class SwerveModuleFalcon {
   }
 
   public void setTurnAngle(double angleDegrees) {
-    m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(angleDegrees), DemandType.ArbitraryFeedForward, 0.0);
+    targetAngle = getClosestTargetAngle(angleDegrees,getTurnWheelAngleDegrees());
+    m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(targetAngle), DemandType.ArbitraryFeedForward, 0.0);
   }
 
   public void setWheelSpeed(double metersPerSec) {
@@ -328,9 +340,12 @@ public class SwerveModuleFalcon {
   }
 
   double getClosestTargetAngle(double targetAngleDegrees, double currentAngleDegrees) {
-    double delta = currentAngleDegrees - targetAngleDegrees;
-    double phi = Math.abs(delta) % 360;       
-    double smallestDelta = Math.copySign(phi > 180 ? 360 - phi : phi, delta);
+    double error = Math.IEEEremainder(targetAngleDegrees-currentAngleDegrees, 360);
 
-    return currentAngleDegrees + smallestDelta;  }
+    return currentAngleDegrees + error;
+  }
+
+  public double getTargetAngle() {
+    return targetAngle;
+  }
 }

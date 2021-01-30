@@ -84,7 +84,7 @@ public class DriveSubsystem extends SubsystemBase {
       
     SmartDashboard.putNumber("Heading deg", getHeading());
     SmartDashboard.putNumber("Heading Rate deg per s", getTurnRate());
-    SmartDashboard.putNumber("Front Right Angle deg", m_frontRight.getState().angle.getDegrees());
+    SmartDashboard.putNumber("Front Right Angle deg", m_frontRight.getTurnWheelAngleDegrees());
     SmartDashboard.putNumber("Front Left Angle deg", m_frontLeft.getState().angle.getDegrees());
     SmartDashboard.putNumber("Rear Right Angle deg", m_rearRight.getState().angle.getDegrees());
     SmartDashboard.putNumber("Rear Left Angle deg", m_rearLeft.getState().angle.getDegrees());
@@ -92,14 +92,20 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("xSpeed", xSpeed);
     SmartDashboard.putNumber("ySpeed", ySpeed);
     SmartDashboard.putNumber("rot", rot);
-    SmartDashboard.putNumber("Left Front Speed", speedCommandLF);
-    SmartDashboard.putNumber("Left Front Angle", rotCommandLF);
-    SmartDashboard.putNumber("Left back Speed", speedCommandLB);
-    SmartDashboard.putNumber("Left back Angle", rotCommandLB);
-    SmartDashboard.putNumber("Right Front Speed", speedCommandRF);
-    SmartDashboard.putNumber("Right Front Angle", rotCommandRF);
-    SmartDashboard.putNumber("Right Back Speed", speedCommandRB);
-    SmartDashboard.putNumber("Right Back Angle", rotCommandRB);
+    SmartDashboard.putNumber("Left Front commanded Speed", speedCommandLF);
+    SmartDashboard.putNumber("Left Front commanded Angle", rotCommandLF);
+    SmartDashboard.putNumber("Left back commanded Speed", speedCommandLB);
+    SmartDashboard.putNumber("Left back commanded Angle", rotCommandLB);
+    SmartDashboard.putNumber("Right Front commanded Speed", speedCommandRF);
+    SmartDashboard.putNumber("Right Front commanded Angle", rotCommandRF);
+    SmartDashboard.putNumber("Right Back commanded Speed", speedCommandRB);
+    SmartDashboard.putNumber("Right Back commanded Angle", rotCommandRB);
+    SmartDashboard.putNumber("Front right target angle", m_frontRight.getTargetAngle());
+    SmartDashboard.putNumber("Front right travel distance inches", m_frontRight.getDriveWheelDistanceInches());
+    SmartDashboard.putNumber("Front right travel distance meters", m_frontRight.getDriveWheelDistanceMeters());
+    SmartDashboard.putNumber("Front Right Speed inches per s", m_frontRight.getDriveInchesPerSecond());
+    SmartDashboard.putNumber("Front Right Speed Meters per s", m_frontRight.getDriveMetersPerSecond());
+
 
   }
 
@@ -176,6 +182,7 @@ public class DriveSubsystem extends SubsystemBase {
     } 
   }
 
+
   public void setDriveEnabled(boolean isEnabled) {
     isDriveEnabled = isEnabled;
     if (!isEnabled) {
@@ -192,7 +199,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param desiredStates The desired SwerveModule states.
    */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    //SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(desiredStates[0]);
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
