@@ -53,9 +53,9 @@ public class RobotContainer {
     RunCommand driveCommand = new RunCommand(
             () ->
                 m_robotDrive.drive(
-                    -m_driverController.getLeftYAxis()*9.0,
-                    -m_driverController.getLeftXAxis()*9.0,
-                    -m_driverController.getRightXAxis()*20.0,
+                    -m_driverController.getLeftYAxis()* DriveConstants.kMaxSpeedMetersPerSecond,
+                    -m_driverController.getLeftXAxis()*DriveConstants.kMaxSpeedMetersPerSecond,
+                    -m_driverController.getRightXAxis() * 10.0,
                     true));
     driveCommand.addRequirements(m_robotDrive);
     // Configure default commands

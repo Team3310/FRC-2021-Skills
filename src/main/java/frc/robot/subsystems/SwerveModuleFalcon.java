@@ -4,26 +4,24 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorControllerConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.Constants;
-import frc.robot.utilities.Util;
 
 public class SwerveModuleFalcon {
 
   private final TalonFX m_driveMotor;
   private final TalonFX m_turnMotor;
+  private final CANCoder canEncoder;
+
 
   private double targetAngle;
 
@@ -37,16 +35,23 @@ public class SwerveModuleFalcon {
    * @param driveMotorChannel   ID for the drive motor.
    * @param turningMotorChannel ID for the turning motor.
    */
-  public SwerveModuleFalcon(int driveMotorChannel, int turningMotorChannel, boolean isRight) {
+  public SwerveModuleFalcon(int driveMotorChannel, int turningMotorChannel, boolean isRight, int canCoderID) {
 
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_turnMotor = new TalonFX(turningMotorChannel);
+    canEncoder = new CANCoder(canCoderID);
 
-    TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+    TalonFXConfiguration configsTurn = new TalonFXConfiguration();
+    TalonFXConfiguration configsDrive = new TalonFXConfiguration();
 
-    m_driveMotor.configAllSettings(configs);
-    m_turnMotor.configAllSettings(configs);
+    configsTurn.remoteFilter1.remoteSensorDeviceID = canCoderID;
+    configsTurn.remoteFilter1.remoteSensorSource = RemoteSensorSource.CANCoder;
+    configsTurn.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();
+
+    configsDrive.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+
+    m_driveMotor.configAllSettings(configsDrive);
+    m_turnMotor.configAllSettings(configsTurn);
 
     m_driveMotor.setInverted(isRight ? TalonFXInvertType.CounterClockwise : TalonFXInvertType.Clockwise);
     m_turnMotor.setInverted(TalonFXInvertType.CounterClockwise);
@@ -91,10 +96,10 @@ public class SwerveModuleFalcon {
     m_turnMotor.configMotionAcceleration(28000);
     m_turnMotor.configMotionSCurveStrength(4);
 
-    m_turnMotor.config_kF(kTurnMotionMagicSlot, 0.05);
-    m_turnMotor.config_kP(kTurnMotionMagicSlot, 1.0);
-    m_turnMotor.config_kI(kTurnMotionMagicSlot, 0.00002);
-    m_turnMotor.config_kD(kTurnMotionMagicSlot, 0.0);
+    m_turnMotor.config_kF(kTurnMotionMagicSlot, 0.1);
+    m_turnMotor.config_kP(kTurnMotionMagicSlot, 3.0);
+    m_turnMotor.config_kI(kTurnMotionMagicSlot, 0.003);
+    m_turnMotor.config_kD(kTurnMotionMagicSlot, 2.0);
     m_turnMotor.config_IntegralZone(kTurnMotionMagicSlot, (int)(5.0 * turnDegreesToTicks(5)));
 
     m_turnMotor.selectProfileSlot(kTurnMotionMagicSlot, 0);
@@ -112,7 +117,7 @@ public class SwerveModuleFalcon {
   /**
    * Sets the desired state for the module.
    *
-   * @param state Desired state with speed and angle.
+   * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
     // Optimize the reference state to avoid spinning further than 90 degrees
@@ -176,6 +181,7 @@ public class SwerveModuleFalcon {
   public void resetEncoders() {
     m_driveMotor.setSelectedSensorPosition(0);
     m_turnMotor.setSelectedSensorPosition(0);
+    canEncoder.setPosition(0);
   }
 
   // Returns drive sensor velocity in ticks per 100ms
@@ -196,7 +202,7 @@ public class SwerveModuleFalcon {
   // Returns turn sensor position in ticks
   public double getTurnPositionNativeUnits() {
     return m_turnMotor.getSelectedSensorPosition(0);
-  }
+  }// changed from 0
 
   // Takes that times the wheel has rotated * by the circumference of the wheel to
   // get its distance traveled in inches
@@ -213,7 +219,7 @@ public class SwerveModuleFalcon {
   }
 
   public static double driveWheelRotationsToTicks(double wheelRotations) {
-    return encoderRotationsToTicks(wheelRotations * Constants.DriveConstants.DRIVE_OUTPUT_TO_ENCODER_RATIO);
+    return driveEncoderRotationsToTicks(wheelRotations * Constants.DriveConstants.DRIVE_OUTPUT_TO_ENCODER_RATIO);
   }
 
   // Takes inches and converts it to meters using units class
@@ -232,12 +238,16 @@ public class SwerveModuleFalcon {
   }
 
   public static double turnWheelRotationsToTicks(double wheelRotations) {
-    return encoderRotationsToTicks(wheelRotations * Constants.DriveConstants.TURN_OUTPUT_TO_ENCODER_RATIO);
+    return turnEncoderRotationsToTicks(wheelRotations * Constants.DriveConstants.TURN_OUTPUT_TO_ENCODER_RATIO);
   }
 
-  public static double encoderRotationsToTicks(double encoderRotations) {
-    return encoderRotations * Constants.DriveConstants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+  public static double driveEncoderRotationsToTicks(double encoderRotations) {
+    return encoderRotations * Constants.DriveConstants.DRIVE_ENCODER_TICKS_PER_MOTOR_REVOLUTION;
   }
+  public static double turnEncoderRotationsToTicks(double encoderRotations) {
+    return encoderRotations * Constants.DriveConstants.TURN_ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+  }
+
 
   // Takes the sensor velocity of an encoder * by 10 to get ticks per second / the
   // encoder PPR to get encoder rotations
@@ -245,7 +255,7 @@ public class SwerveModuleFalcon {
   // second
   private static double driveWheelTicksPer100msToInchesPerSec(double ticks_100ms) {
     return driveWheelRotationsToInches(
-        ticks_100ms * 10.0 / Constants.DriveConstants.ENCODER_TICKS_PER_MOTOR_REVOLUTION);
+        ticks_100ms * 10.0 / Constants.DriveConstants.DRIVE_ENCODER_TICKS_PER_MOTOR_REVOLUTION);
   }
 
   private static double driveWheelInchesPerSecToTicksPer100ms(double inchesPerSec) {
@@ -285,11 +295,11 @@ public class SwerveModuleFalcon {
   // Sensors positions in ticks / Pulses per Revolution of the Encoder = Encoder
   // Rotations (If ratio is 1:1)
   public double getDriveEncoderRotations() {
-    return getDrivePositionNativeUnits() / Constants.DriveConstants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+    return getDrivePositionNativeUnits() / Constants.DriveConstants.DRIVE_ENCODER_TICKS_PER_MOTOR_REVOLUTION;
   }
 
   public double getTurnEncoderRotations() {
-    return getTurnPositionNativeUnits() / Constants.DriveConstants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+    return getTurnPositionNativeUnits() / Constants.DriveConstants.TURN_ENCODER_TICKS_PER_MOTOR_REVOLUTION;
   }
 
   // Wheel Rotations = Encoder Rotations (If ratio is 1:1)
@@ -348,4 +358,13 @@ public class SwerveModuleFalcon {
   public double getTargetAngle() {
     return targetAngle;
   }
+
+  public double getAbsoluteCanPose() {
+    return canEncoder.getAbsolutePosition();
+  }
+
+  public double getCanPose() {
+    return canEncoder.getPosition();
+  }
+
 }

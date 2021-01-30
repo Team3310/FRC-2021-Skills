@@ -23,25 +23,25 @@ public class DriveSubsystem extends SubsystemBase {
       new SwerveModuleFalcon(
           DriveConstants.kFrontLeftDriveMotorPort,
           DriveConstants.kFrontLeftTurningMotorPort,
-              true);
+              true, 2);
 
   private final SwerveModuleFalcon m_frontRight =
       new SwerveModuleFalcon(
           DriveConstants.kFrontRightDriveMotorPort,
           DriveConstants.kFrontRightTurningMotorPort,
-              false);
+              false, 1);
 
   private final SwerveModuleFalcon m_rearLeft =
       new SwerveModuleFalcon(
           DriveConstants.kRearLeftDriveMotorPort,
           DriveConstants.kRearLeftTurningMotorPort,
-              true);
+              true, 3);
     
   private final SwerveModuleFalcon m_rearRight =
       new SwerveModuleFalcon(
           DriveConstants.kRearRightDriveMotorPort,
           DriveConstants.kRearRightTurningMotorPort,
-              false);
+              false, 0);
 
   private boolean isDriveEnabled = false;
   private double xSpeed;
@@ -85,9 +85,10 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Heading deg", getHeading());
     SmartDashboard.putNumber("Heading Rate deg per s", getTurnRate());
     SmartDashboard.putNumber("Front Right Angle deg", m_frontRight.getTurnWheelAngleDegrees());
-    SmartDashboard.putNumber("Front Left Angle deg", m_frontLeft.getState().angle.getDegrees());
-    SmartDashboard.putNumber("Rear Right Angle deg", m_rearRight.getState().angle.getDegrees());
-    SmartDashboard.putNumber("Rear Left Angle deg", m_rearLeft.getState().angle.getDegrees());
+    SmartDashboard.putNumber("Front Left Angle deg", m_frontLeft.getTurnWheelAngleDegrees());
+    SmartDashboard.putNumber("Rear Right Angle deg", m_rearRight.getTurnWheelAngleDegrees());
+    SmartDashboard.putNumber("Rear Left Angle deg", m_rearLeft.getTurnWheelAngleDegrees());
+    SmartDashboard.putNumber("front right native units", m_frontRight.getTurnPositionNativeUnits());
     SmartDashboard.putNumber("Front Right Speed m per s", m_rearRight.getState().speedMetersPerSecond);
     SmartDashboard.putNumber("xSpeed", xSpeed);
     SmartDashboard.putNumber("ySpeed", ySpeed);
@@ -105,8 +106,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Front right travel distance meters", m_frontRight.getDriveWheelDistanceMeters());
     SmartDashboard.putNumber("Front Right Speed inches per s", m_frontRight.getDriveInchesPerSecond());
     SmartDashboard.putNumber("Front Right Speed Meters per s", m_frontRight.getDriveMetersPerSecond());
-
-
+    SmartDashboard.putNumber("Front Right get Absolute can encoder pose", m_frontRight.getAbsoluteCanPose());
   }
 
   public void setTurnAngle(double angleDegrees) {
