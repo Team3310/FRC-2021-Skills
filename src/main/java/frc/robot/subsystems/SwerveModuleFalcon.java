@@ -28,6 +28,8 @@ public class SwerveModuleFalcon {
   private static final int kTurnMotionMagicSlot = 0;
   private static final int kWheelVelocitySlot = 0;
   private static final double TWO_PI = 2*Math.PI;
+  private static final double TURN_ZERO_MULTIPLIER = 1000000.0;
+  private double zeroTurnOffsetTicks = 0;
 
   /**
    * Constructs a SwerveModule.
@@ -167,7 +169,7 @@ public class SwerveModuleFalcon {
 
   public void setTurnAngle(double angleDegrees) {
     targetAngle = getClosestTargetAngle(angleDegrees,getTurnWheelAngleDegrees());
-    m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(targetAngle), DemandType.ArbitraryFeedForward, 0.0);
+    m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(targetAngle) - zeroTurnOffsetTicks, DemandType.ArbitraryFeedForward, 0.0);
   }
 
   public void setWheelSpeed(double metersPerSec) {
@@ -180,8 +182,17 @@ public class SwerveModuleFalcon {
   // Zeros all the SwerveModule encoders.
   public void resetEncoders() {
     m_driveMotor.setSelectedSensorPosition(0);
-    m_turnMotor.setSelectedSensorPosition(0);
-    canEncoder.setPosition(0);
+    updateTurnZeroOffset();
+  }
+
+  public void updateTurnZeroOffset() {
+    double referenceZeroTurnDegrees = (double)(m_turnMotor.configGetCustomParam(0)) / TURN_ZERO_MULTIPLIER;
+    double currentTurnDegrees = canEncoder.getAbsolutePosition();
+    zeroTurnOffsetTicks = turnDegreesToTicks(currentTurnDegrees - referenceZeroTurnDegrees);
+  }
+
+  public void saveTurnZero() {
+    m_turnMotor.configSetCustomParam((int)(canEncoder.getAbsolutePosition() * TURN_ZERO_MULTIPLIER), 0);
   }
 
   // Returns drive sensor velocity in ticks per 100ms
@@ -201,7 +212,7 @@ public class SwerveModuleFalcon {
 
   // Returns turn sensor position in ticks
   public double getTurnPositionNativeUnits() {
-    return m_turnMotor.getSelectedSensorPosition(0);
+    return m_turnMotor.getSelectedSensorPosition(0) - zeroTurnOffsetTicks;
   }// changed from 0
 
   // Takes that times the wheel has rotated * by the circumference of the wheel to
@@ -359,11 +370,11 @@ public class SwerveModuleFalcon {
     return targetAngle;
   }
 
-  public double getAbsoluteCanPose() {
+  public double getAbsoluteCanPosition() {
     return canEncoder.getAbsolutePosition();
   }
 
-  public double getCanPose() {
+  public double getCanPosition() {
     return canEncoder.getPosition();
   }
 

@@ -106,7 +106,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Front right travel distance meters", m_frontRight.getDriveWheelDistanceMeters());
     SmartDashboard.putNumber("Front Right Speed inches per s", m_frontRight.getDriveInchesPerSecond());
     SmartDashboard.putNumber("Front Right Speed Meters per s", m_frontRight.getDriveMetersPerSecond());
-    SmartDashboard.putNumber("Front Right get Absolute can encoder pose", m_frontRight.getAbsoluteCanPose());
+    SmartDashboard.putNumber("Front Right get Absolute can encoder pose", m_frontRight.getAbsoluteCanPosition());
   }
 
   public void setTurnAngle(double angleDegrees) {
@@ -212,6 +212,13 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.resetEncoders();
     m_rearLeft.resetEncoders();
     m_rearRight.resetEncoders();
+  }
+
+  public void saveTurnZeros() {
+    m_frontLeft.saveTurnZero();
+    m_frontRight.saveTurnZero();
+    m_rearLeft.saveTurnZero();
+    m_rearRight.saveTurnZero();
   }
 
   /** Zeroes the heading of the robot. */

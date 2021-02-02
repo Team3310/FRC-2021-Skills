@@ -93,7 +93,8 @@ public class RobotContainer {
       SmartDashboard.putData("Disable Drive", new InstantCommand(() -> m_robotDrive.setDriveEnabled(false)));
       SmartDashboard.putData("Set percent 100", new InstantCommand(() -> m_robotDrive.setWheelSpeedPercent(100)));
       SmartDashboard.putData("Set percent 0", new InstantCommand(() -> m_robotDrive.setWheelSpeedPercent(0)));
-  }
+      SmartDashboard.putData("Save Turn Zeros", new InstantCommand(() -> m_robotDrive.saveTurnZeros()));
+    }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
