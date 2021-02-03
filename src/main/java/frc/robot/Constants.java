@@ -18,6 +18,12 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
  */
 public final class Constants {
   public static final class DriveConstants {
+
+    public static final double absoluteTurnZeroDegRightFront = 98.6;
+    public static final double absoluteTurnZeroDegLeftFront = 2.02;
+    public static final double absoluteTurnZeroDegRightRear = 137.37;
+    public static final double absoluteTurnZeroDegLeftRear = 59.4;
+
     public static final int kFrontLeftDriveMotorPort = 14;
     public static final int kRearLeftDriveMotorPort = 15;
     public static final int kFrontRightDriveMotorPort = 1;

@@ -30,6 +30,7 @@ public class SwerveModuleFalcon {
   private static final double TWO_PI = 2*Math.PI;
   private static final double TURN_ZERO_MULTIPLIER = 100.0;
   private double zeroTurnOffsetTicks = 0;
+  private double absoluteTurnZeroDeg;
 
   /**
    * Constructs a SwerveModule.
@@ -37,7 +38,9 @@ public class SwerveModuleFalcon {
    * @param driveMotorChannel   ID for the drive motor.
    * @param turningMotorChannel ID for the turning motor.
    */
-  public SwerveModuleFalcon(int driveMotorChannel, int turningMotorChannel, boolean isRight, int canCoderID) {
+  public SwerveModuleFalcon(int driveMotorChannel, int turningMotorChannel, boolean isRight, int canCoderID, double absoluteTurnZeroDeg) {
+
+    this.absoluteTurnZeroDeg = absoluteTurnZeroDeg;
 
     m_driveMotor = new TalonFX(driveMotorChannel);
     m_turnMotor = new TalonFX(turningMotorChannel);
@@ -105,6 +108,8 @@ public class SwerveModuleFalcon {
     m_turnMotor.config_IntegralZone(kTurnMotionMagicSlot, (int)(5.0 * turnDegreesToTicks(5)));
 
     m_turnMotor.selectProfileSlot(kTurnMotionMagicSlot, 0);
+
+
   }
 
   /**
@@ -137,7 +142,7 @@ public class SwerveModuleFalcon {
 
     // Calculate the turning motor output from the turning PID controller.
         m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(targetSpeed));
-        m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(currentAngleDegrees + error),
+        m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(currentAngleDegrees + error) - zeroTurnOffsetTicks,
         DemandType.ArbitraryFeedForward, 0.0);
   }
 
@@ -169,7 +174,7 @@ public class SwerveModuleFalcon {
 
   public void setTurnAngle(double angleDegrees) {
     targetAngle = getClosestTargetAngle(angleDegrees,getTurnWheelAngleDegrees());
-    m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(targetAngle) , DemandType.ArbitraryFeedForward, 0.0);
+    m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(targetAngle) - zeroTurnOffsetTicks , DemandType.ArbitraryFeedForward, 0.0);
   }
 
   public void setWheelSpeed(double metersPerSec) {
@@ -182,23 +187,23 @@ public class SwerveModuleFalcon {
   // Zeros all the SwerveModule encoders.
   public void resetEncoders() {
     m_driveMotor.setSelectedSensorPosition(0);
-    m_turnMotor.setSelectedSensorPosition(0);
-    canEncoder.setPosition(0);
+ //   m_turnMotor.setSelectedSensorPosition(0);
+//    canEncoder.setPosition(0);
     updateTurnZeroOffset();
   }
 
   public void updateTurnZeroOffset() {
-    double referenceZeroTurnDegrees = (double)(m_turnMotor.configGetCustomParam(0)) / TURN_ZERO_MULTIPLIER;
+    double referenceZeroTurnDegrees = absoluteTurnZeroDeg;
     double currentTurnDegrees = canEncoder.getAbsolutePosition();
-    zeroTurnOffsetTicks = turnDegreesToTicks(currentTurnDegrees - referenceZeroTurnDegrees);
-    //canEncoder.setPositionToAbsolute();
+    double closestCurrentTurnDeg= getClosestTargetAngle(currentTurnDegrees,referenceZeroTurnDegrees);
+    zeroTurnOffsetTicks = turnDegreesToTicks(closestCurrentTurnDeg-referenceZeroTurnDegrees);
+    m_turnMotor.setSelectedSensorPosition(0);
+    canEncoder.setPosition(0);
   }
 
-  public void saveTurnZero() {
-    m_turnMotor.configSetCustomParam((int)(canEncoder.getAbsolutePosition() * TURN_ZERO_MULTIPLIER), 0);
-    //m_turnMotor.configSetCustomParam(1200, 0);
+  public double getOffsetDeg() {
+    return zeroTurnOffsetTicks*360.0/Constants.DriveConstants.TURN_ENCODER_TICKS_PER_MOTOR_REVOLUTION;
   }
-
   // Returns drive sensor velocity in ticks per 100ms
   public double getDriveVelocityNativeUnits() {
     return m_driveMotor.getSelectedSensorVelocity(0);
@@ -216,7 +221,7 @@ public class SwerveModuleFalcon {
 
   // Returns turn sensor position in ticks
   public double getTurnPositionNativeUnits() {
-    return m_turnMotor.getSelectedSensorPosition(0);
+    return m_turnMotor.getSelectedSensorPosition(0) + zeroTurnOffsetTicks;
   }// changed from 0
 
   // Takes that times the wheel has rotated * by the circumference of the wheel to

@@ -37,7 +37,7 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   // The driver's controller
   private final GameController m_driverController = new GameController(OIConstants.kDriverControllerPort, new Xbox());
@@ -93,7 +93,6 @@ public class RobotContainer {
       SmartDashboard.putData("Disable Drive", new InstantCommand(() -> m_robotDrive.setDriveEnabled(false)));
       SmartDashboard.putData("Set percent 100", new InstantCommand(() -> m_robotDrive.setWheelSpeedPercent(100)));
       SmartDashboard.putData("Set percent 0", new InstantCommand(() -> m_robotDrive.setWheelSpeedPercent(0)));
-      SmartDashboard.putData("Save Turn Zeros", new InstantCommand(() -> m_robotDrive.saveTurnZeros()));
     }
 
   /**

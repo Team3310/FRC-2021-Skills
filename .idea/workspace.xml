@@ -5,7 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="975e1bfd-a245-446a-94b1-d9562a7e9a87" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/pathweaver/PathWeaver/Paths/finalRun.path" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pathweaver/PathWeaver/Paths/firstCurve.path" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pathweaver/PathWeaver/Paths/secondCurve.path" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pathweaver/PathWeaver/Paths/thirdCurve.path" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pathweaver/PathWeaver/pathweaver.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/Robot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/RobotContainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/RobotContainer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/DriveSubsystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/DriveSubsystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/SwerveModuleFalcon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/SwerveModuleFalcon.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -67,7 +76,7 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../CSA/3D_Deathmatch" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../FRC-2020" />
   </component>
   <component name="RunAnythingCache">
     <option name="myCommands">

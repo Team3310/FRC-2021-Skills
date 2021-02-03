@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 
 @SuppressWarnings("PMD.ExcessiveImports")
@@ -23,25 +24,25 @@ public class DriveSubsystem extends SubsystemBase {
       new SwerveModuleFalcon(
           DriveConstants.kFrontLeftDriveMotorPort,
           DriveConstants.kFrontLeftTurningMotorPort,
-              true, 2);
+              true, 2, DriveConstants.absoluteTurnZeroDegLeftFront);
 
   private final SwerveModuleFalcon m_frontRight =
       new SwerveModuleFalcon(
           DriveConstants.kFrontRightDriveMotorPort,
           DriveConstants.kFrontRightTurningMotorPort,
-              false, 1);
+              false, 1, DriveConstants.absoluteTurnZeroDegRightFront);
 
   private final SwerveModuleFalcon m_rearLeft =
       new SwerveModuleFalcon(
           DriveConstants.kRearLeftDriveMotorPort,
           DriveConstants.kRearLeftTurningMotorPort,
-              true, 3);
+              true, 3, DriveConstants.absoluteTurnZeroDegLeftRear);
     
   private final SwerveModuleFalcon m_rearRight =
       new SwerveModuleFalcon(
           DriveConstants.kRearRightDriveMotorPort,
           DriveConstants.kRearRightTurningMotorPort,
-              false, 0);
+              false, 0, DriveConstants.absoluteTurnZeroDegRightRear);
 
   private boolean isDriveEnabled = false;
   private double xSpeed;
@@ -67,8 +68,6 @@ public class DriveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     m_gyro.configFactoryDefault();
-    resetHeading();
-    resetEncoders();
   }
 
   @Override
@@ -107,6 +106,17 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Front Right Speed inches per s", m_frontRight.getDriveInchesPerSecond());
     SmartDashboard.putNumber("Front Right Speed Meters per s", m_frontRight.getDriveMetersPerSecond());
     SmartDashboard.putNumber("Front Right get Absolute can encoder pose", m_frontRight.getAbsoluteCanPosition());
+    SmartDashboard.putNumber("Front Right get can encoder pose", m_frontRight.getCanPosition());
+    SmartDashboard.putNumber("Front Right get offset", m_frontRight.getOffsetDeg());
+    SmartDashboard.putNumber("Front Left get Absolute can encoder pose", m_frontLeft.getAbsoluteCanPosition());
+    SmartDashboard.putNumber("Front Left get can encoder pose", m_frontLeft.getCanPosition());
+    SmartDashboard.putNumber("Front Left get offset", m_frontLeft.getOffsetDeg());
+    SmartDashboard.putNumber("Back Right get Absolute can encoder pose", m_rearRight.getAbsoluteCanPosition());
+    SmartDashboard.putNumber("Back Right get can encoder pose", m_rearRight.getCanPosition());
+    SmartDashboard.putNumber("Back Right get offset", m_rearRight.getOffsetDeg());
+    SmartDashboard.putNumber("Back Left get Absolute can encoder pose", m_rearLeft.getAbsoluteCanPosition());
+    SmartDashboard.putNumber("Back Left get can encoder pose", m_rearLeft.getCanPosition());
+    SmartDashboard.putNumber("Back Left get offset", m_rearLeft.getOffsetDeg());
   }
 
   public void setTurnAngle(double angleDegrees) {
@@ -214,12 +224,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.resetEncoders();
   }
 
-  public void saveTurnZeros() {
-    m_frontLeft.saveTurnZero();
-    m_frontRight.saveTurnZero();
-    m_rearLeft.saveTurnZero();
-    m_rearRight.saveTurnZero();
-  }
 
   /** Zeroes the heading of the robot. */
   public void resetHeading() {
