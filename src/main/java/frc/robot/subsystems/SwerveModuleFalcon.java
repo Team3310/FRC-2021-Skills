@@ -4,13 +4,19 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
-import com.ctre.phoenix.motorcontrol.can.BaseMotorControllerConfiguration;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-
 import com.ctre.phoenix.sensors.CANCoder;
+
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.util.Units;
@@ -28,7 +34,6 @@ public class SwerveModuleFalcon {
   private static final int kTurnMotionMagicSlot = 0;
   private static final int kWheelVelocitySlot = 0;
   private static final double TWO_PI = 2*Math.PI;
-  private static final double TURN_ZERO_MULTIPLIER = 100.0;
   private double zeroTurnOffsetTicks = 0;
   private double absoluteTurnZeroDeg;
 
@@ -38,7 +43,7 @@ public class SwerveModuleFalcon {
    * @param driveMotorChannel   ID for the drive motor.
    * @param turningMotorChannel ID for the turning motor.
    */
-  public SwerveModuleFalcon(int driveMotorChannel, int turningMotorChannel, boolean isRight, int canCoderID, double absoluteTurnZeroDeg) {
+  public SwerveModuleFalcon(int driveMotorChannel, int turningMotorChannel, int canCoderID, double absoluteTurnZeroDeg, boolean isRight) {
 
     this.absoluteTurnZeroDeg = absoluteTurnZeroDeg;
 
@@ -108,8 +113,6 @@ public class SwerveModuleFalcon {
     m_turnMotor.config_IntegralZone(kTurnMotionMagicSlot, (int)(5.0 * turnDegreesToTicks(5)));
 
     m_turnMotor.selectProfileSlot(kTurnMotionMagicSlot, 0);
-
-
   }
 
   /**

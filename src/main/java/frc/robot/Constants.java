@@ -34,6 +34,11 @@ public final class Constants {
     public static final int kFrontRightTurningMotorPort = 5;
     public static final int kRearRightTurningMotorPort = 4;
 
+    public static final int kFrontLeftCanCoderPort = 2;
+    public static final int kRearLeftCanCoderPort = 3;
+    public static final int kFrontRightCanCoderPort = 1;
+    public static final int kRearRightCanCoderPort = 0;
+
     public static final int kGyroPort = 16;
 
     public static final double TURN_OUTPUT_TO_ENCODER_RATIO = 1;//12.8;

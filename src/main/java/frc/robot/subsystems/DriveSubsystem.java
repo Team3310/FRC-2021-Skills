@@ -23,25 +23,33 @@ public class DriveSubsystem extends SubsystemBase {
       new SwerveModuleFalcon(
           DriveConstants.kFrontLeftDriveMotorPort,
           DriveConstants.kFrontLeftTurningMotorPort,
-              true, 2, DriveConstants.absoluteTurnZeroDegLeftFront);
+          DriveConstants.kFrontLeftCanCoderPort, 
+          DriveConstants.absoluteTurnZeroDegLeftFront, 
+          true);
 
   private final SwerveModuleFalcon m_frontRight =
       new SwerveModuleFalcon(
           DriveConstants.kFrontRightDriveMotorPort,
           DriveConstants.kFrontRightTurningMotorPort,
-              false, 1, DriveConstants.absoluteTurnZeroDegRightFront);
+          DriveConstants.kFrontRightCanCoderPort, 
+          DriveConstants.absoluteTurnZeroDegRightFront, 
+          false);
 
   private final SwerveModuleFalcon m_rearLeft =
       new SwerveModuleFalcon(
           DriveConstants.kRearLeftDriveMotorPort,
           DriveConstants.kRearLeftTurningMotorPort,
-              true, 3, DriveConstants.absoluteTurnZeroDegLeftRear);
+          DriveConstants.kRearLeftCanCoderPort, 
+          DriveConstants.absoluteTurnZeroDegLeftRear, 
+          true);
     
   private final SwerveModuleFalcon m_rearRight =
       new SwerveModuleFalcon(
           DriveConstants.kRearRightDriveMotorPort,
           DriveConstants.kRearRightTurningMotorPort,
-              false, 0, DriveConstants.absoluteTurnZeroDegRightRear);
+          DriveConstants.kRearRightCanCoderPort, 
+          DriveConstants.absoluteTurnZeroDegRightRear, 
+          false);
 
   private boolean isDriveEnabled = false;
   private double xSpeed;
@@ -55,8 +63,6 @@ public class DriveSubsystem extends SubsystemBase {
   private double rotCommandRF;
   private double rotCommandLB;
   private double rotCommandRB;
-
-  private final static DriveSubsystem INSTANCE = new DriveSubsystem();
 
   // The gyro sensor
   private PigeonIMU m_gyro = new PigeonIMU(DriveConstants.kGyroPort);
@@ -230,10 +236,6 @@ public class DriveSubsystem extends SubsystemBase {
   public void resetHeading() {
     m_gyro.setYaw(0);
     m_gyro.setFusedHeading(0);
-  }
-
-  public static DriveSubsystem getInstance() {
-    return INSTANCE;
   }
 
   /**
