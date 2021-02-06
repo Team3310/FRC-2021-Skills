@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -18,7 +20,9 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.auto.SlalomSkills;
@@ -112,4 +116,24 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autonTaskChooser.getSelected();
     }
+
+    public static SwerveControllerCommand getSwerveTrajectoryCommand(DriveSubsystem driveSubsystem, Trajectory trajectory) {
+        var thetaController = new ProfiledPIDController(
+                AutoConstants.kPThetaController, 
+                AutoConstants.kIThetaController, 
+                AutoConstants.kDThetaController,
+                AutoConstants.kThetaControllerConstraints);
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+        return new SwerveControllerCommand(
+                trajectory, 
+                driveSubsystem::getPose, 
+                DriveConstants.kDriveKinematics,
+                new PIDController(AutoConstants.kPXController, AutoConstants.kIXController, AutoConstants.kDXController),
+                new PIDController(AutoConstants.kPYController, AutoConstants.kIYController, AutoConstants.kDYController), 
+                thetaController,
+                driveSubsystem::setModuleStates, 
+                driveSubsystem);
+    }
+
 }

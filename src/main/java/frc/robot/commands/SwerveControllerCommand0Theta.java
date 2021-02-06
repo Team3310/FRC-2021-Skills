@@ -9,8 +9,6 @@ import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import javax.swing.plaf.nimbus.State;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.HolonomicDriveController;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -22,6 +20,9 @@ import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.subsystems.DriveSubsystem;
 
 /**
  * A command that uses two PID controllers ({@link PIDController}) and a ProfiledPIDController
@@ -138,6 +139,18 @@ public class SwerveControllerCommand0Theta extends CommandBase {
             trajectory.getStates().get(trajectory.getStates().size() - 1).poseMeters.getRotation(),
         outputModuleStates,
         requirements);
+  }
+
+  public SwerveControllerCommand0Theta(Trajectory trajectory, DriveSubsystem driveSubsystem, ProfiledPIDController thetaController) {
+    this(
+      trajectory,
+      driveSubsystem::getPose, 
+      DriveConstants.kDriveKinematics,
+      new PIDController(AutoConstants.kPXController, AutoConstants.kIXController, AutoConstants.kDXController),
+      new PIDController(AutoConstants.kPYController, AutoConstants.kIYController, AutoConstants.kDYController), 
+      thetaController,
+      driveSubsystem::setModuleStates, 
+      driveSubsystem);
   }
 
   @Override

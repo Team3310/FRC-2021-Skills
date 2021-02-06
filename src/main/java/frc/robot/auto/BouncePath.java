@@ -18,6 +18,7 @@ public class BouncePath extends SequentialCommandGroup {
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         addCommands(
+                
                 new SwerveControllerCommand(
                         RobotContainer.loadPathTrajectory("output/firstClimb.wpilib.json"),
                         robotDrive::getPose, // Functional interface to feed supplier
