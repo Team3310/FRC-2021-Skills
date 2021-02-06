@@ -19,7 +19,7 @@ public class BouncePath extends SequentialCommandGroup {
 
         addCommands(
                 new SwerveControllerCommand(
-                        RobotContainer.makePathTrajectory("output/firstClimb.wpilib.json"),
+                        RobotContainer.loadPathTrajectory("output/firstClimb.wpilib.json"),
                         robotDrive::getPose, // Functional interface to feed supplier
                         Constants.DriveConstants.kDriveKinematics,
 
@@ -31,7 +31,7 @@ public class BouncePath extends SequentialCommandGroup {
                         robotDrive),
 
                 new SwerveControllerCommand(
-                        RobotContainer.makePathTrajectory("output/firstFall.wpilib.json"),
+                        RobotContainer.loadPathTrajectory("output/firstFall.wpilib.json"),
                         robotDrive::getPose, // Functional interface to feed supplier
                         Constants.DriveConstants.kDriveKinematics,
 
@@ -43,7 +43,7 @@ public class BouncePath extends SequentialCommandGroup {
                         robotDrive),
 
                 new SwerveControllerCommand(
-                        RobotContainer.makePathTrajectory("output/secondClimb.wpilib.json"),
+                        RobotContainer.loadPathTrajectory("output/secondClimb.wpilib.json"),
                         robotDrive::getPose, // Functional interface to feed supplier
                         Constants.DriveConstants.kDriveKinematics,
 
@@ -55,7 +55,7 @@ public class BouncePath extends SequentialCommandGroup {
                         robotDrive),
 
                 new SwerveControllerCommand(
-                        RobotContainer.makePathTrajectory("output/secondFallAndLastClimb.wpilib.json"),
+                        RobotContainer.loadPathTrajectory("output/secondFallAndLastClimb.wpilib.json"),
                         robotDrive::getPose, // Functional interface to feed supplier
                         Constants.DriveConstants.kDriveKinematics,
                         // Position controllers
@@ -66,7 +66,7 @@ public class BouncePath extends SequentialCommandGroup {
                         robotDrive),
 
                 new SwerveControllerCommand(
-                        RobotContainer.makePathTrajectory("output/finalFall.wpilib.json"),
+                        RobotContainer.loadPathTrajectory("output/finalFall.wpilib.json"),
                         robotDrive::getPose, // Functional interface to feed supplier
                         Constants.DriveConstants.kDriveKinematics,
 
@@ -78,7 +78,7 @@ public class BouncePath extends SequentialCommandGroup {
                         robotDrive),
 
                 new SwerveControllerCommand(
-                        RobotContainer.makePathTrajectory("output/firstClimb.wpilib.json"),
+                        RobotContainer.loadPathTrajectory("output/firstClimb.wpilib.json"),
                         robotDrive::getPose, // Functional interface to feed supplier
                         Constants.DriveConstants.kDriveKinematics,
 
