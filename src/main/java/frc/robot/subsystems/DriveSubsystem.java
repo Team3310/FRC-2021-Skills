@@ -57,6 +57,8 @@ public class DriveSubsystem extends SubsystemBase {
   private double rotCommandLB;
   private double rotCommandRB;
 
+  private final static DriveSubsystem INSTANCE = new DriveSubsystem();
+
   // The gyro sensor
   private PigeonIMU m_gyro = new PigeonIMU(DriveConstants.kGyroPort);
   private double[] xyz_dps = new double[3];
@@ -229,6 +231,10 @@ public class DriveSubsystem extends SubsystemBase {
   public void resetHeading() {
     m_gyro.setYaw(0);
     m_gyro.setFusedHeading(0);
+  }
+
+  public static DriveSubsystem getInstance() {
+    return INSTANCE;
   }
 
   /**

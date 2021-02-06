@@ -4,8 +4,12 @@
 
 package frc.robot;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -17,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -100,6 +105,18 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+  public static Trajectory makePathTrajectory(String JSONPath) {
+      Trajectory trajectory = new Trajectory();
+      try {
+          Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(JSONPath);
+          trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+      }
+      catch (IOException ex) {
+          DriverStation.reportError("Unable to open trajectory: " + JSONPath, ex.getStackTrace());
+      }
+      return trajectory;
+  }
+
   public Command getAutonomousCommand() {
     // Create config for trajectory
     TrajectoryConfig config =
@@ -109,16 +126,18 @@ public class RobotContainer {
             // Add kinematics to ensure max speed is actually obeyed
             .setKinematics(DriveConstants.kDriveKinematics);
 
-    // An example trajectory to follow.  All units in meters.
-    Trajectory exampleTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(0)),
-            config);
+//    // An example trajectory to follow.  All units in meters.
+//    Trajectory exampleTrajectory =
+//        TrajectoryGenerator.generateTrajectory(
+//            // Start at the origin facing the +X direction
+//            new Pose2d(0, 0, new Rotation2d(0)),
+//            // Pass through these two interior waypoints, making an 's' curve path
+//            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+//            // End 3 meters straight ahead of where we started, facing forward
+//            new Pose2d(3, 0, new Rotation2d(0)),
+//            config);
+//
+
 
     var thetaController =
         new ProfiledPIDController(
@@ -127,7 +146,7 @@ public class RobotContainer {
 
     SwerveControllerCommand swerveControllerCommand =
         new SwerveControllerCommand(
-            exampleTrajectory,
+            makePathTrajectory("output/firstClimb.wpilib.json"),
             m_robotDrive::getPose, // Functional interface to feed supplier
             DriveConstants.kDriveKinematics,
 
@@ -139,7 +158,7 @@ public class RobotContainer {
             m_robotDrive);
 
     // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+//    m_robotDrive.resetOdometry(trajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
