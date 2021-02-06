@@ -19,10 +19,10 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 public final class Constants {
   public static final class DriveConstants {
 
-    public static final double absoluteTurnZeroDegRightFront = 98.6;
-    public static final double absoluteTurnZeroDegLeftFront = 2.02;
-    public static final double absoluteTurnZeroDegRightRear = 137.37;
-    public static final double absoluteTurnZeroDegLeftRear = 59.4;
+    public static final double absoluteTurnZeroDegRightFront = 96.4;
+    public static final double absoluteTurnZeroDegLeftFront = 322.0;
+    public static final double absoluteTurnZeroDegRightRear = 136.4 ;
+    public static final double absoluteTurnZeroDegLeftRear = 55.9;
 
     public static final int kFrontLeftDriveMotorPort = 14;
     public static final int kRearLeftDriveMotorPort = 15;
@@ -78,9 +78,9 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+    public static final double kPXController = 1.5;
+    public static final double kPYController = 1.5;
+    public static final double kPThetaController = 1.5;
 
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
