@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.auto.SlalomSkills;
+import frc.robot.auto.*;
 import frc.robot.controller.GameController;
 import frc.robot.controller.Xbox;
 import frc.robot.subsystems.DriveSubsystem;
@@ -61,6 +61,10 @@ public class RobotContainer {
     private void configureAuton() {
         autonTaskChooser = new SendableChooser<>();
         autonTaskChooser.addOption("Slalom Path", new SlalomSkills(m_robotDrive));
+        autonTaskChooser.addOption("Red Path A", new RedPathA(m_robotDrive));
+        autonTaskChooser.addOption("Red Path B", new RedPathB(m_robotDrive));
+        autonTaskChooser.addOption("Blue Path A", new BluePathA(m_robotDrive));
+        autonTaskChooser.addOption("Blue Path B", new BluePathB(m_robotDrive));
         SmartDashboard.putData("auton", autonTaskChooser);
     }
 
