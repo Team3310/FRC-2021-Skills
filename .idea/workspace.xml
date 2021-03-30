@@ -5,7 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="975e1bfd-a245-446a-94b1-d9562a7e9a87" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/IntakeSubsystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/SwerveControllerCommand.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SwerveControllerCommand.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pathweaver/Paths/BluePathA.path" beforeDir="false" afterPath="$PROJECT_DIR$/pathweaver/Paths/BluePathA.path" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pathweaver/Paths/BluePathB.path" beforeDir="false" afterPath="$PROJECT_DIR$/pathweaver/Paths/BluePathB.path" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pathweaver/Paths/RedPathA.path" beforeDir="false" afterPath="$PROJECT_DIR$/pathweaver/Paths/RedPathA.path" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pathweaver/Paths/RedPathB.path" beforeDir="false" afterPath="$PROJECT_DIR$/pathweaver/Paths/RedPathB.path" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pathweaver/output/BluePathA.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/pathweaver/output/BluePathA.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pathweaver/output/BluePathB.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/pathweaver/output/BluePathB.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pathweaver/output/RedPathA.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/pathweaver/output/RedPathA.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pathweaver/output/RedPathB.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/pathweaver/output/RedPathB.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pathweaver/pathweaver.json" beforeDir="false" afterPath="$PROJECT_DIR$/pathweaver/pathweaver.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/BluePathA.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/BluePathA.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/BluePathB.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/BluePathB.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/RedPathA.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/RedPathA.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/RedPathB.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/RedPathB.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/Slalom1.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/Slalom1.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/finalFall.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/finalFall.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/firstClimb.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/firstClimb.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/firstFall.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/firstFall.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/secondClimb.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/secondClimb.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/deploy/output/secondFallAndLastClimb.wpilib.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/deploy/output/secondFallAndLastClimb.wpilib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/Robot.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +73,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="FRC v2 Subsystem" />
       </list>
     </option>
   </component>
@@ -81,7 +106,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/deploy/output" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -90,14 +115,15 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\foxyr\Documents\SwerveControllerCommand\src\main\deploy\output" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="frc.robot.auto" />
+      <recent name="C:\Users\foxyr\Documents\SwerveControllerCommand\pathweaver\output" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Alex\Documents\Robotics\SwerveControllerCommand\src\main\deploy" />
       <recent name="C:\Users\Alex\Documents\Robotics\SwerveControllerCommand\pathweaver\PathWeaver\output" />
       <recent name="C:\Users\Alex\Documents\Robotics\SwerveControllerCommand\src\main\deploy\paths" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="frc.robot.auto" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -105,7 +131,28 @@
       <command value="gradle deploy" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.PathWeaver">
+  <component name="RunManager" selected="Gradle.Deploy">
+    <configuration name="Deploy" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="deploy" />
+          </list>
+        </option>
+        <option name="vmOptions" value="" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <configuration name="PathWeaver" type="GradleRunConfiguration" factoryName="Gradle">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -170,14 +217,15 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Gradle.Deploy" />
       <item itemvalue="Gradle.PathWeaver" />
       <item itemvalue="Gradle.SwerveControllerCommand [build]" />
       <item itemvalue="Gradle.SwerveControllerCommand [deploy]" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.SwerveControllerCommand [build]" />
         <item itemvalue="Gradle.SwerveControllerCommand [deploy]" />
+        <item itemvalue="Gradle.SwerveControllerCommand [build]" />
       </list>
     </recent_temporary>
   </component>
