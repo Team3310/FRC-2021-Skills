@@ -13,7 +13,9 @@ public class StopTrajectory extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("Stopping Trajectory");
-        robotDrive.drive(0, 0, 0, false);
+        robotDrive.drive(0, 0, 0, false, false, false);
+        robotDrive.setWheelSpeed(0);
+        System.out.println("Stopped Trajectory");
     }
 
     @Override

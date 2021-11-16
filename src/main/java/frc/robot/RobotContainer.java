@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -29,6 +28,7 @@ import frc.robot.auto.*;
 import frc.robot.controller.GameController;
 import frc.robot.controller.Xbox;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.utilities.SwerveControllerCommandBHR;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -60,6 +60,7 @@ public class RobotContainer {
 
     private void configureAuton() {
         autonTaskChooser = new SendableChooser<>();
+        autonTaskChooser.addOption("test", new test(m_robotDrive));
         autonTaskChooser.addOption("Slalom Path", new SlalomSkills(m_robotDrive));
         autonTaskChooser.addOption("Red Path A", new RedPathA(m_robotDrive));
         autonTaskChooser.addOption("Red Path B", new RedPathB(m_robotDrive));
@@ -74,7 +75,8 @@ public class RobotContainer {
         RunCommand driveCommand = new RunCommand(
                 () -> m_robotDrive.drive(-m_driverController.getLeftYAxis() * DriveConstants.kMaxSpeedMetersPerSecond,
                         -m_driverController.getLeftXAxis() * DriveConstants.kMaxSpeedMetersPerSecond,
-                        -m_driverController.getRightXAxis() * 10.0, true));
+                        -m_driverController.getRightXAxis() * 10.0, true, 
+                        m_driverController.getLeftBumper().get(), m_driverController.getRightBumper().get()));
         driveCommand.addRequirements(m_robotDrive);
         // Configure default commands
         // Set the default drive command to split-stick arcade drive
@@ -121,7 +123,7 @@ public class RobotContainer {
         return autonTaskChooser.getSelected();
     }
 
-    public static SwerveControllerCommand getSwerveTrajectoryCommand(DriveSubsystem driveSubsystem, Trajectory trajectory) {
+    public static SwerveControllerCommandBHR getSwerveTrajectoryCommand(DriveSubsystem driveSubsystem, Trajectory trajectory) {
         var thetaController = new ProfiledPIDController(
                 AutoConstants.kPThetaController, 
                 AutoConstants.kIThetaController, 
@@ -129,7 +131,7 @@ public class RobotContainer {
                 AutoConstants.kThetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        return new SwerveControllerCommand(
+        return new SwerveControllerCommandBHR(
                 trajectory, 
                 driveSubsystem::getPose, 
                 DriveConstants.kDriveKinematics,

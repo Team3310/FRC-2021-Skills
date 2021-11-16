@@ -1,9 +1,9 @@
 {
   "lengthUnit": "Meter",
   "exportUnit": "Always Meters",
-  "maxVelocity": 4.0,
-  "maxAcceleration": 7.0,
-  "wheelBase": 0.34,
-  "gameName": "Galactic Search B",
+  "maxVelocity": 1.0,
+  "maxAcceleration": 4.0,
+  "trackWidth": 0.34,
+  "gameName": "Infinite Recharge 2021",
   "outputDir": "../src/main/deploy"
 }

@@ -1,13 +1,10 @@
+package frc.robot.utilities;
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
-
 import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.HolonomicDriveController;
@@ -19,10 +16,9 @@ import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.utilities.SwerveDriveKinematicsBHR;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * A command that uses two PID controllers ({@link PIDController}) and a ProfiledPIDController
@@ -36,7 +32,7 @@ import frc.robot.utilities.SwerveDriveKinematicsBHR;
  * to the angle given in the final state of the trajectory.
  */
 @SuppressWarnings("MemberName")
-public class SwerveControllerCommand0Theta extends CommandBase {
+public class SwerveControllerCommandBHR extends CommandBase {
   private final Timer m_timer = new Timer();
   private final Trajectory m_trajectory;
   private final Supplier<Pose2d> m_pose;
@@ -66,7 +62,7 @@ public class SwerveControllerCommand0Theta extends CommandBase {
    * @param requirements The subsystems to require.
    */
   @SuppressWarnings("ParameterName")
-  public SwerveControllerCommand0Theta(
+  public SwerveControllerCommandBHR(
       Trajectory trajectory,
       Supplier<Pose2d> pose,
       SwerveDriveKinematicsBHR kinematics,
@@ -119,7 +115,7 @@ public class SwerveControllerCommand0Theta extends CommandBase {
    * @param requirements The subsystems to require.
    */
   @SuppressWarnings("ParameterName")
-  public SwerveControllerCommand0Theta(
+  public SwerveControllerCommandBHR(
       Trajectory trajectory,
       Supplier<Pose2d> pose,
       SwerveDriveKinematicsBHR kinematics,
@@ -141,20 +137,9 @@ public class SwerveControllerCommand0Theta extends CommandBase {
         requirements);
   }
 
-  public SwerveControllerCommand0Theta(Trajectory trajectory, DriveSubsystem driveSubsystem, ProfiledPIDController thetaController) {
-    this(
-      trajectory,
-      driveSubsystem::getPose, 
-      DriveConstants.kDriveKinematics,
-      new PIDController(AutoConstants.kPXController, AutoConstants.kIXController, AutoConstants.kDXController),
-      new PIDController(AutoConstants.kPYController, AutoConstants.kIYController, AutoConstants.kDYController), 
-      thetaController,
-      driveSubsystem::setModuleStates, 
-      driveSubsystem);
-  }
-
   @Override
   public void initialize() {
+//    System.out.println("Start Swerve Command Controller");
     m_timer.reset();
     m_timer.start();
   }
@@ -164,22 +149,18 @@ public class SwerveControllerCommand0Theta extends CommandBase {
   public void execute() {
     double curTime = m_timer.get();
     var desiredState = m_trajectory.sample(curTime);
-    var theta0DesiredState = new Trajectory.State(
-        desiredState.timeSeconds,
-        desiredState.velocityMetersPerSecond,
-        desiredState.accelerationMetersPerSecondSq,
-        new Pose2d(desiredState.poseMeters.getTranslation(), Rotation2d.fromDegrees(0)),
-        desiredState.curvatureRadPerMeter);
 
     var targetChassisSpeeds =
-        m_controller.calculate(m_pose.get(), theta0DesiredState, Rotation2d.fromDegrees(0));
+        m_controller.calculate(m_pose.get(), desiredState, desiredState.poseMeters.getRotation());
     var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
 
     m_outputModuleStates.accept(targetModuleStates);
+//    System.out.println("Update Swerve Command Controller delta = " + (m_timer.get() - curTime));
   }
 
   @Override
   public void end(boolean interrupted) {
+//    System.out.println("Stop Swerve Command Controller");
     m_timer.stop();
   }
 

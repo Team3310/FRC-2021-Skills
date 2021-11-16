@@ -8,13 +8,15 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.utilities.SwerveDriveOdometryBHR;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class DriveSubsystem extends SubsystemBase {
@@ -63,14 +65,17 @@ public class DriveSubsystem extends SubsystemBase {
   private double rotCommandRF;
   private double rotCommandLB;
   private double rotCommandRB;
+  private Translation2d centerPivot = new Translation2d();
+  private Translation2d rightFrontPivot = new Translation2d(Constants.DriveConstants.kTrackWidth/2.0, -Constants.DriveConstants.kTrackWidth/2.0);
+  private Translation2d leftFrontPivot = new Translation2d(Constants.DriveConstants.kTrackWidth/2.0, Constants.DriveConstants.kTrackWidth/2.0);
 
   // The gyro sensor
   private PigeonIMU m_gyro = new PigeonIMU(DriveConstants.kGyroPort);
   private double[] xyz_dps = new double[3];
 
   // Odometry class for tracking robot pose
-  SwerveDriveOdometry m_odometry =
-      new SwerveDriveOdometry(DriveConstants.kDriveKinematics, Rotation2d.fromDegrees(m_gyro.getFusedHeading()));
+  SwerveDriveOdometryBHR m_odometry =
+      new SwerveDriveOdometryBHR(DriveConstants.kDriveKinematics, Rotation2d.fromDegrees(m_gyro.getFusedHeading()));
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -173,15 +178,23 @@ public class DriveSubsystem extends SubsystemBase {
    * @param fieldRelative Whether the provided x and y speeds are relative to the field.
    */
   @SuppressWarnings("ParameterName")
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean leftPivot, boolean rightPivot) {
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
     this.rot = rot;
+
+    Translation2d pivot = centerPivot;
+    if (leftPivot) {
+      pivot = leftFrontPivot;
+    } else if (rightPivot) {
+      pivot = rightFrontPivot;
+    }
+
     if (isDriveEnabled) {
       var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
           fieldRelative
               ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getHeading()))
-              : new ChassisSpeeds(xSpeed, ySpeed, rot));
+              : new ChassisSpeeds(xSpeed, ySpeed, rot), pivot);
       SwerveDriveKinematics.normalizeWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
       speedCommandLF = swerveModuleStates[0].speedMetersPerSecond;
       rotCommandLF = swerveModuleStates[0].angle.getDegrees();
@@ -199,6 +212,9 @@ public class DriveSubsystem extends SubsystemBase {
     } 
   }
 
+  public static Translation2d getFieldRelativePivot(Translation2d robotRelativePivot, Rotation2d robotAngle) {
+    return robotRelativePivot.rotateBy(robotAngle);
+  }
 
   public void setDriveEnabled(boolean isEnabled) {
     isDriveEnabled = isEnabled;

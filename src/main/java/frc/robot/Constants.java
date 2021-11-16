@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import frc.robot.utilities.SwerveDriveKinematicsBHR;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -48,7 +49,7 @@ public final class Constants {
     public static final double DRIVE_ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
     public static final double TURN_ENCODER_TICKS_PER_MOTOR_REVOLUTION = 4096.0;
     public static final double INTAKE_ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;;
-    public static final double kWheelDiameterInches = 3.89;
+    public static final double kWheelDiameterInches = 3.73;    //3.89
 
     // Distance between centers of right and left wheels on robot
     public static final double kTrackWidth = 0.34;
@@ -56,8 +57,8 @@ public final class Constants {
     // Distance between front and back wheels on robot
     public static final double kWheelBase = 0.34;
 
-    public static final SwerveDriveKinematics kDriveKinematics =
-        new SwerveDriveKinematics(
+    public static final SwerveDriveKinematicsBHR kDriveKinematics =
+        new SwerveDriveKinematicsBHR(
             new Translation2d(kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
@@ -72,7 +73,7 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 4;
+    public static final double kMaxSpeedMetersPerSecond = 1;
   }
 
   public static final class OIConstants {
@@ -86,17 +87,17 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXController = 1.5;
-    public static final double kIXController = 1.5;
-    public static final double kDXController = 1.5;
+    public static final double kPXController = 2.0;
+    public static final double kIXController = 0;
+    public static final double kDXController = 0;
 
-    public static final double kPYController = 0;
+    public static final double kPYController = 2.0;
     public static final double kIYController = 0;
     public static final double kDYController = 0;
 
-    public static final double kPThetaController = 0.1;
-    public static final double kIThetaController = 0.1;
-    public static final double kDThetaController = 0.1;
+    public static final double kPThetaController = 10.0;
+    public static final double kIThetaController = 1.0;
+    public static final double kDThetaController = 0.0;
 
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
