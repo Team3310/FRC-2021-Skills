@@ -73,9 +73,10 @@ public class RobotContainer {
         // A split-stick arcade command, with forward/backward controlled by the left
         // hand, and turning controlled by the right.
         RunCommand driveCommand = new RunCommand(
-                () -> m_robotDrive.drive(-m_driverController.getLeftYAxis() * DriveConstants.kMaxSpeedMetersPerSecond,
-                        -m_driverController.getLeftXAxis() * DriveConstants.kMaxSpeedMetersPerSecond,
-                        -m_driverController.getRightXAxis() * 10.0, true, 
+                () -> m_robotDrive.drive(
+                    modifyAxis(-m_driverController.getLeftYAxis() * DriveConstants.kMaxSpeedMetersPerSecond),
+                    modifyAxis(-m_driverController.getLeftXAxis() * DriveConstants.kMaxSpeedMetersPerSecond),
+                    modifyAxis(-m_driverController.getRightXAxis() * 10.0), true, 
                         m_driverController.getLeftBumper().get(), m_driverController.getRightBumper().get()));
         driveCommand.addRequirements(m_robotDrive);
         // Configure default commands
@@ -142,4 +143,26 @@ public class RobotContainer {
                 driveSubsystem);
     }
 
+    private static double deadband(double value, double deadband) {
+        if (Math.abs(value) > deadband) {
+          if (value > 0.0) {
+            return (value - deadband) / (1.0 - deadband);
+          } else {
+            return (value + deadband) / (1.0 - deadband);
+          }
+        } else {
+          return 0.0;
+        }
+      }
+    
+      private static double modifyAxis(double value) {
+        // Deadband
+        value = deadband(value, 0.05);
+    
+        // Square the axis
+        value = Math.copySign(value * value, value);
+    
+        return value;
+      }
+    
 }
