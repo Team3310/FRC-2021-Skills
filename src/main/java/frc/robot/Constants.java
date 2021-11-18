@@ -44,11 +44,11 @@ public final class Constants {
 
     public static final int kGyroPort = 16;
 
-    public static final double TURN_OUTPUT_TO_ENCODER_RATIO = 1;//12.8;
+    public static final double TURN_OUTPUT_TO_ENCODER_RATIO = 12.8; // 12.8 for integrated sensor, 1.0 for cancoder
     public static final double DRIVE_OUTPUT_TO_ENCODER_RATIO = 8.16;
     public static final double DRIVE_ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
-    public static final double TURN_ENCODER_TICKS_PER_MOTOR_REVOLUTION = 4096.0;
-    public static final double INTAKE_ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;;
+    public static final double TURN_ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;  // 2048 for integrated sensor, 4096 for cancoder
+    public static final double INTAKE_ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
     public static final double kWheelDiameterInches = 3.73;    //3.89
 
     // Distance between centers of right and left wheels on robot

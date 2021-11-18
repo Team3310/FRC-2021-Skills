@@ -32,11 +32,13 @@ public class SwerveModuleFalcon {
   private double targetAngle;
 
   private static final int kTurnMotionMagicSlot = 0;
+  private static final int kTurnPIDSlot = 1;
   private static final int kWheelVelocitySlot = 0;
   private static final double TWO_PI = 2*Math.PI;
   private double zeroTurnOffsetTicks = 0;
   private double absoluteTurnZeroDeg;
-
+  private static final boolean useMotionMagicTurn = false;
+  private static final boolean useCanCoderTurn = false;
   /**
    * Constructs a SwerveModule.
    *
@@ -54,9 +56,13 @@ public class SwerveModuleFalcon {
     TalonFXConfiguration configsTurn = new TalonFXConfiguration();
     TalonFXConfiguration configsDrive = new TalonFXConfiguration();
 
-    configsTurn.remoteFilter1.remoteSensorDeviceID = canCoderID;
-    configsTurn.remoteFilter1.remoteSensorSource = RemoteSensorSource.CANCoder;
-    configsTurn.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();
+    if (useCanCoderTurn) {
+      configsTurn.remoteFilter1.remoteSensorDeviceID = canCoderID;
+      configsTurn.remoteFilter1.remoteSensorSource = RemoteSensorSource.CANCoder;
+      configsTurn.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();
+    } else {
+      configsDrive.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+    }
 
     configsDrive.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
 
@@ -112,7 +118,17 @@ public class SwerveModuleFalcon {
     m_turnMotor.config_kD(kTurnMotionMagicSlot, 2.0);
     m_turnMotor.config_IntegralZone(kTurnMotionMagicSlot, (int)(5.0 * turnDegreesToTicks(5)));
 
-    m_turnMotor.selectProfileSlot(kTurnMotionMagicSlot, 0);
+    m_turnMotor.config_kF(kTurnPIDSlot, 0.0);
+    m_turnMotor.config_kP(kTurnPIDSlot, 0.2);
+    m_turnMotor.config_kI(kTurnPIDSlot, 0.000);
+    m_turnMotor.config_kD(kTurnPIDSlot, 0.1);
+    m_turnMotor.config_IntegralZone(kTurnPIDSlot, (int)(5.0 * turnDegreesToTicks(5)));
+
+    if (useMotionMagicTurn) {
+      m_turnMotor.selectProfileSlot(kTurnMotionMagicSlot, 0);
+    } else {
+      m_turnMotor.selectProfileSlot(kTurnPIDSlot, 0);
+    }
   }
 
   /**
@@ -144,9 +160,14 @@ public class SwerveModuleFalcon {
     }
 
     // Calculate the turning motor output from the turning PID controller.
-        m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(targetSpeed));
-        m_turnMotor.set(TalonFXControlMode.MotionMagic, turnDegreesToTicks(currentAngleDegrees + error) - zeroTurnOffsetTicks,
-        DemandType.ArbitraryFeedForward, 0.0);
+    m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(targetSpeed));
+    if (useMotionMagicTurn) {
+      m_turnMotor.set(TalonFXControlMode.MotionMagic,
+          turnDegreesToTicks(currentAngleDegrees + error) - zeroTurnOffsetTicks, DemandType.ArbitraryFeedForward, 0.0);
+    } else {
+      m_turnMotor.set(TalonFXControlMode.Position,
+          turnDegreesToTicks(currentAngleDegrees + error) - zeroTurnOffsetTicks, DemandType.ArbitraryFeedForward, 0.0);
+    }
   }
 
   /**
