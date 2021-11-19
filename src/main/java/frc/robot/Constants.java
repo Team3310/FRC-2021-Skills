@@ -73,12 +73,12 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 1;
+    public static final double kMaxVoltage = 4;  // This controls max speed in voltage mode. Full speed = 12
+    public static final double kMaxSpeedMetersPerSecond = 4;
   }
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-
   }
 
   public static final class AutoConstants {

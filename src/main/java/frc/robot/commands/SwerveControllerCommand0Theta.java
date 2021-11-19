@@ -149,7 +149,7 @@ public class SwerveControllerCommand0Theta extends CommandBase {
       new PIDController(AutoConstants.kPXController, AutoConstants.kIXController, AutoConstants.kDXController),
       new PIDController(AutoConstants.kPYController, AutoConstants.kIYController, AutoConstants.kDYController), 
       thetaController,
-      driveSubsystem::setModuleStates, 
+      driveSubsystem::setModuleStatesVelocityDriveControl, 
       driveSubsystem);
   }
 

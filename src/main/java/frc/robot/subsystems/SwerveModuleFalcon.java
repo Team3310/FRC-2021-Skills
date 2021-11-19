@@ -21,13 +21,18 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 
 public class SwerveModuleFalcon {
+
+  public enum DriveControlMode {
+    Velocity,
+    Voltage
+  }
 
   private final TalonFX m_driveMotor;
   private final TalonFX m_turnMotor;
   private final CANCoder canEncoder;
-
 
   private double targetAngle;
 
@@ -39,6 +44,7 @@ public class SwerveModuleFalcon {
   private double absoluteTurnZeroDeg;
   private static final boolean useMotionMagicTurn = false;
   private static final boolean useCanCoderTurn = false;
+  private static final double nominalVoltage = 12.0;
   /**
    * Constructs a SwerveModule.
    *
@@ -76,12 +82,12 @@ public class SwerveModuleFalcon {
     m_turnMotor.setNeutralMode(NeutralMode.Brake);
 
     m_driveMotor.enableVoltageCompensation(true);
-    m_driveMotor.configVoltageCompSaturation(12.0);
+    m_driveMotor.configVoltageCompSaturation(nominalVoltage);
     m_driveMotor.configPeakOutputForward(+1.0f);
     m_driveMotor.configPeakOutputReverse(-1.0f);
 
     m_turnMotor.enableVoltageCompensation(true);
-    m_turnMotor.configVoltageCompSaturation(12.0);
+    m_turnMotor.configVoltageCompSaturation(nominalVoltage);
     m_turnMotor.configPeakOutputForward(+1.0f);
     m_turnMotor.configPeakOutputReverse(-1.0f);
 
@@ -145,7 +151,7 @@ public class SwerveModuleFalcon {
    *
    * @param desiredState Desired state with speed and angle.
    */
-  public void setDesiredState(SwerveModuleState desiredState) {
+  public void setDesiredState(SwerveModuleState desiredState, DriveControlMode driveMode) {
     // Optimize the reference state to avoid spinning further than 90 degrees
 //   SwerveModuleState state =
 //            SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getTurnWheelAngleDegrees()));
@@ -159,8 +165,14 @@ public class SwerveModuleFalcon {
       targetSpeed = -targetSpeed;
     }
 
+    if (driveMode == DriveControlMode.Velocity) {
+      m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(targetSpeed));
+    }
+    else {
+      m_driveMotor.set(TalonFXControlMode.PercentOutput, targetSpeed / DriveConstants.kMaxSpeedMetersPerSecond * DriveConstants.kMaxVoltage / nominalVoltage);
+    }
+
     // Calculate the turning motor output from the turning PID controller.
-    m_driveMotor.set(TalonFXControlMode.Velocity, driveMetersPerSecondToTicksPer100ms(targetSpeed));
     if (useMotionMagicTurn) {
       m_turnMotor.set(TalonFXControlMode.MotionMagic,
           turnDegreesToTicks(currentAngleDegrees + error) - zeroTurnOffsetTicks, DemandType.ArbitraryFeedForward, 0.0);

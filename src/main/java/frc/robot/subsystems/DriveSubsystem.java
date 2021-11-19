@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.subsystems.SwerveModuleFalcon.DriveControlMode;
 import frc.robot.utilities.SwerveDriveOdometryBHR;
 
 @SuppressWarnings("PMD.ExcessiveImports")
@@ -205,10 +206,11 @@ public class DriveSubsystem extends SubsystemBase {
       speedCommandRB = swerveModuleStates[3].speedMetersPerSecond;
       rotCommandRB = swerveModuleStates[3].angle.getDegrees();
 
-      m_frontLeft.setDesiredState(swerveModuleStates[0]);
-      m_frontRight.setDesiredState(swerveModuleStates[1]);
-      m_rearLeft.setDesiredState(swerveModuleStates[2]);
-      m_rearRight.setDesiredState(swerveModuleStates[3]);
+      DriveControlMode controlMode = DriveControlMode.Voltage;
+      m_frontLeft.setDesiredState(swerveModuleStates[0], controlMode);
+      m_frontRight.setDesiredState(swerveModuleStates[1], controlMode);
+      m_rearLeft.setDesiredState(swerveModuleStates[2], controlMode);
+      m_rearRight.setDesiredState(swerveModuleStates[3], controlMode);
     } 
   }
 
@@ -231,12 +233,16 @@ public class DriveSubsystem extends SubsystemBase {
    *
    * @param desiredStates The desired SwerveModule states.
    */
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
+  public void setModuleStates(SwerveModuleState[] desiredStates, DriveControlMode controlMode) {
     SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(desiredStates[0]);
-    m_frontRight.setDesiredState(desiredStates[1]);
-    m_rearLeft.setDesiredState(desiredStates[2]);
-    m_rearRight.setDesiredState(desiredStates[3]);
+    m_frontLeft.setDesiredState(desiredStates[0], controlMode);
+    m_frontRight.setDesiredState(desiredStates[1], controlMode);
+    m_rearLeft.setDesiredState(desiredStates[2], controlMode);
+    m_rearRight.setDesiredState(desiredStates[3], controlMode);
+  }
+
+  public void setModuleStatesVelocityDriveControl(SwerveModuleState[] desiredStates) {
+    setModuleStates(desiredStates, DriveControlMode.Velocity);
   }
 
   /** Resets the drive encoders to currently read a position of 0. */

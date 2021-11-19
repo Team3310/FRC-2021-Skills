@@ -155,6 +155,13 @@ public class SwerveControllerCommandBHR extends CommandBase {
     var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
 
     m_outputModuleStates.accept(targetModuleStates);
+    // System.out.println(curTime + "," + 
+    //   m_pose.get().getTranslation().getX() + "," + 
+    //   m_pose.get().getTranslation().getY()  + "," + 
+    //   m_pose.get().getRotation().getDegrees() + "," + 
+    //   desiredState.poseMeters.getTranslation().getX() + "," + 
+    //   desiredState.poseMeters.getTranslation().getY() + "," + 
+    //   desiredState.poseMeters.getRotation().getDegrees()); 
 //    System.out.println("Update Swerve Command Controller delta = " + (m_timer.get() - curTime));
   }
 

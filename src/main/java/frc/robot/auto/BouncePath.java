@@ -28,7 +28,7 @@ public class BouncePath extends SequentialCommandGroup {
                         new PIDController(Constants.AutoConstants.kPXController, 0, 0.1),
                         new PIDController(Constants.AutoConstants.kPYController, 0, 0.1),
                         thetaController,
-                        robotDrive::setModuleStates,
+                        robotDrive::setModuleStatesVelocityDriveControl,
                         robotDrive),
 
                 new SwerveControllerCommandBHR(
@@ -40,7 +40,7 @@ public class BouncePath extends SequentialCommandGroup {
                         new PIDController(Constants.AutoConstants.kPXController, 0, 0.1),
                         new PIDController(Constants.AutoConstants.kPYController, 0, 0.1),
                         thetaController,
-                        robotDrive::setModuleStates,
+                        robotDrive::setModuleStatesVelocityDriveControl,
                         robotDrive),
 
                 new SwerveControllerCommandBHR(
@@ -52,7 +52,7 @@ public class BouncePath extends SequentialCommandGroup {
                         new PIDController(Constants.AutoConstants.kPXController, 0, 0.1),
                         new PIDController(Constants.AutoConstants.kPYController, 0, 0.1),
                         thetaController,
-                        robotDrive::setModuleStates,
+                        robotDrive::setModuleStatesVelocityDriveControl,
                         robotDrive),
 
                 new SwerveControllerCommandBHR(
@@ -63,7 +63,7 @@ public class BouncePath extends SequentialCommandGroup {
                         new PIDController(Constants.AutoConstants.kPXController, 0, 0.1),
                         new PIDController(Constants.AutoConstants.kPYController, 0, 0.1),
                         thetaController,
-                        robotDrive::setModuleStates,
+                        robotDrive::setModuleStatesVelocityDriveControl,
                         robotDrive),
 
                 new SwerveControllerCommandBHR(
@@ -75,7 +75,7 @@ public class BouncePath extends SequentialCommandGroup {
                         new PIDController(Constants.AutoConstants.kPXController, 0, 0.1),
                         new PIDController(Constants.AutoConstants.kPYController, 0, 0.1),
                         thetaController,
-                        robotDrive::setModuleStates,
+                        robotDrive::setModuleStatesVelocityDriveControl,
                         robotDrive),
 
                 new SwerveControllerCommandBHR(
@@ -87,7 +87,7 @@ public class BouncePath extends SequentialCommandGroup {
                         new PIDController(Constants.AutoConstants.kPXController, 0, 0.1),
                         new PIDController(Constants.AutoConstants.kPYController, 0, 0.1),
                         thetaController,
-                        robotDrive::setModuleStates,
+                        robotDrive::setModuleStatesVelocityDriveControl,
                         robotDrive),
 
                 new StopTrajectory(robotDrive)
